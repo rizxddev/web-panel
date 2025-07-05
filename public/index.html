@@ -7,30 +7,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
-  <div class="bg-slate-800 p-8 rounded-2xl max-w-sm w-full flex flex-col gap-5 items-center shadow-xl animate-fadein">
-    <h1 class="font-bold text-3xl mb-4 text-indigo-300 drop-shadow-lg">Panel RizxMods</h1>
-    <!-- Pakai tag <a> untuk full reload -->
-    <a href="login-reseller.html"
-      class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 shadow animate-btnpop">Login Reseller</a>
+<body class="bg-gradient-to-tr from-[#141e30] via-[#243b55] to-[#3a539b] min-h-screen flex items-center justify-center">
+
+  <div class="bg-white/10 backdrop-blur-lg border border-white/10 shadow-2xl rounded-3xl px-7 py-10 max-w-sm w-full flex flex-col gap-5 items-center animate-fadein">
+    <div class="mb-2 flex flex-col items-center">
+      <span class="inline-block text-5xl mb-1 animate-pop">🚀</span>
+      <h1 class="font-extrabold text-3xl sm:text-4xl mb-1 text-indigo-200 drop-shadow-lg tracking-wide text-center">
+        Panel RizxMods
+      </h1>
+      <p class="text-indigo-100 text-sm font-medium opacity-80 text-center">
+        Sistem panel server profesional & otomatis
+      </p>
+    </div>
+
     <a href="login-admin.html"
-      class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 shadow animate-btnpop">Login Admin</a>
+      class="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 hover:shadow-lg p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 text-white tracking-wide shadow animate-btnpop">
+      👑 Login Admin
+    </a>
+    <a href="login-reseller.html"
+      class="w-full bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-600 hover:from-indigo-600 hover:to-sky-700 hover:shadow-lg p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 text-white tracking-wide shadow animate-btnpop">
+      🧑‍💼 Login Reseller
+    </a>
     <a id="btn-wa" target="_blank"
-      class="w-full bg-emerald-600 hover:bg-emerald-700 p-3 rounded-xl text-center block text-lg font-semibold shadow animate-btnpop">Chat Owner via WhatsApp</a>
+      class="w-full bg-gradient-to-r from-emerald-500 via-green-400 to-lime-400 hover:from-emerald-600 hover:to-lime-500 hover:shadow-lg p-3 rounded-xl text-center block text-lg font-semibold shadow text-white transition active:scale-95 animate-btnpop">
+      💬 Chat Owner via WhatsApp
+    </a>
     <a id="btn-channel" target="_blank"
-      class="w-full bg-yellow-500 hover:bg-yellow-600 p-3 rounded-xl text-center block text-lg font-semibold shadow animate-btnpop">Gabung Saluran WhatsApp</a>
+      class="w-full bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600 hover:shadow-lg p-3 rounded-xl text-center block text-lg font-semibold shadow text-white transition active:scale-95 animate-btnpop">
+      📣 Gabung Saluran WhatsApp
+    </a>
   </div>
+
   <style>
     @keyframes fadein {
-      from { opacity: 0; transform: translateY(-20px);}
+      from { opacity: 0; transform: translateY(24px);}
       to { opacity: 1; transform: translateY(0);}
     }
-    .animate-fadein { animation: fadein 0.6s cubic-bezier(.4,2,.6,1);}
+    .animate-fadein { animation: fadein 0.7s cubic-bezier(.4,2,.6,1);}
     @keyframes btnpop {
       0% { transform: scale(0.92);}
       100% { transform: scale(1);}
     }
-    .animate-btnpop { animation: btnpop 0.2s;}
+    .animate-btnpop { animation: btnpop 0.22s;}
+    @keyframes pop {
+      0% { transform: scale(0.8);}
+      100% { transform: scale(1);}
+    }
+    .animate-pop { animation: pop 0.4s cubic-bezier(.4,2,.6,1);}
   </style>
   <script>
     fetch('/api/env')
