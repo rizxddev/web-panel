@@ -33,6 +33,9 @@
   </style>
 
   <script>
+    // Fokus otomatis ke input username saat halaman dibuka
+    window.onload = () => { document.getElementById("username").focus(); };
+
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector("button[type=submit]");
