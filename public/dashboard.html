@@ -93,7 +93,7 @@
       const res = await fetch("/api/create-panel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, name: panelName, ram })
+        body: JSON.stringify({ username, email, serverName: panelName, ram })
       });
       const data = await res.json();
       if (res.ok) {
