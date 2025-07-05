@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel RizxMods</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+  <div class="bg-slate-800 p-6 rounded max-w-sm w-full flex flex-col gap-4 items-center">
+    <h1 class="font-bold text-2xl mb-2">Panel RizxMods</h1>
+    <button onclick="location.href='/login-reseller.html'" class="w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded">Login Reseller</button>
+    <button onclick="location.href='/login-admin.html'" class="w-full bg-green-600 hover:bg-green-700 p-2 rounded">Login Admin</button>
+    <a id="btn-wa" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 p-2 rounded text-center block">Chat Owner via WhatsApp</a>
+    <a id="btn-channel" target="_blank" class="w-full bg-yellow-500 hover:bg-yellow-600 p-2 rounded text-center block">Gabung Saluran WhatsApp</a>
+  </div>
+  <script>
+    fetch('/api/env')
+      .then(res => res.json())
+      .then(env => {
+        document.getElementById('btn-wa').href = 'https://wa.me/' + env.owner_wa;
+        document.getElementById('btn-channel').href = env.channel_wa;
+      });
+  </script>
+</body>
+</html>

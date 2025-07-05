@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Reseller RizxMods</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+  <form id="loginForm" class="bg-slate-800 p-6 rounded w-full max-w-sm">
+    <h2 class="text-lg font-bold mb-4">Login Reseller</h2>
+    <input type="text" id="username" placeholder="Username Reseller" required class="w-full mb-2 p-2 bg-slate-700 rounded" />
+    <input type="password" id="password" placeholder="Password Reseller" required class="w-full mb-4 p-2 bg-slate-700 rounded" />
+    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded">Login Reseller</button>
+    <a href="/" class="text-xs text-gray-400 hover:underline mt-2 block text-center">Kembali ke Beranda</a>
+  </form>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("username").value.trim(),
+          password: document.getElementById("password").value.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        if (data.role === "reseller") {
+          location.href = "/dashboard.html";
+        } else {
+          alert("Akun ini bukan reseller!");
+        }
+      } else {
+        alert(data.error);
+      }
+    });
+  </script>
+</body>
+</html>
