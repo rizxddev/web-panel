@@ -4,16 +4,34 @@
 <head>
   <meta charset="UTF-8" />
   <title>Panel RizxMods</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
-  <div class="bg-slate-800 p-6 rounded max-w-sm w-full flex flex-col gap-4 items-center">
-    <h1 class="font-bold text-2xl mb-2">Panel RizxMods</h1>
-    <button onclick="location.href='/login-reseller.html'" class="w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded">Login Reseller</button>
-    <button onclick="location.href='/login-admin.html'" class="w-full bg-green-600 hover:bg-green-700 p-2 rounded">Login Admin</button>
-    <a id="btn-wa" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 p-2 rounded text-center block">Chat Owner via WhatsApp</a>
-    <a id="btn-channel" target="_blank" class="w-full bg-yellow-500 hover:bg-yellow-600 p-2 rounded text-center block">Gabung Saluran WhatsApp</a>
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+  <div class="bg-slate-800 p-8 rounded-2xl max-w-sm w-full flex flex-col gap-5 items-center shadow-xl animate-fadein">
+    <h1 class="font-bold text-3xl mb-4 text-indigo-300 drop-shadow-lg">Panel RizxMods</h1>
+    <!-- Pakai tag <a> untuk full reload -->
+    <a href="login-reseller.html"
+      class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 shadow animate-btnpop">Login Reseller</a>
+    <a href="login-admin.html"
+      class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-xl text-lg font-semibold text-center transition active:scale-95 shadow animate-btnpop">Login Admin</a>
+    <a id="btn-wa" target="_blank"
+      class="w-full bg-emerald-600 hover:bg-emerald-700 p-3 rounded-xl text-center block text-lg font-semibold shadow animate-btnpop">Chat Owner via WhatsApp</a>
+    <a id="btn-channel" target="_blank"
+      class="w-full bg-yellow-500 hover:bg-yellow-600 p-3 rounded-xl text-center block text-lg font-semibold shadow animate-btnpop">Gabung Saluran WhatsApp</a>
   </div>
+  <style>
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fadein { animation: fadein 0.6s cubic-bezier(.4,2,.6,1);}
+    @keyframes btnpop {
+      0% { transform: scale(0.92);}
+      100% { transform: scale(1);}
+    }
+    .animate-btnpop { animation: btnpop 0.2s;}
+  </style>
   <script>
     fetch('/api/env')
       .then(res => res.json())
