@@ -21,28 +21,19 @@
   <form id="createPanelForm" class="bg-slate-800/80 border border-indigo-500/30 shadow-xl p-8 rounded-2xl max-w-md w-full space-y-5 animate-pop">
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <!-- Username Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.606 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.606 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
       </span>
       <input type="text" id="username" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Username Panel" required />
     </div>
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <!-- Server Name Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" /></svg>
       </span>
       <input type="text" id="panelName" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nama Server" required />
     </div>
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <!-- RAM Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       </span>
       <select id="ram" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         <option value="1024">RAM 1 GB</option>
@@ -61,7 +52,7 @@
     <button class="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 p-3 rounded-xl w-full font-bold text-lg text-white shadow-lg transition-transform active:scale-95" type="submit">🚀 Buat Panel</button>
   </form>
 
-  <!-- Popup sukses -->
+  <!-- Popup sukses responsive -->
   <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
     <div class="bg-slate-800 px-5 py-7 sm:px-8 sm:py-10 rounded-2xl shadow-xl text-center animate-pop w-[95vw] max-w-xs sm:max-w-md">
       <div class="text-6xl mb-4 animate-celebrate">🎊</div>
@@ -105,17 +96,10 @@
     }
     .copy-btn:hover { background: #334155; color: #38bdf8;}
     .select-all { user-select: all; }
-
-    /* FIX modal blocking */
-    #successModal.hidden {
-      display: none !important;
-      pointer-events: none;
-      opacity: 0;
-    }
   </style>
 
   <script>
-    // Auth check
+    // Auth check: harus login sebagai reseller!
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
     if (!token || role !== "reseller") {
@@ -129,7 +113,8 @@
       const ram = document.getElementById("ram").value;
       const email = username + "@gmail.com";
 
-      if (!username || !panelName) return alert("Lengkapi semua form!");
+      if (!username) return alert("Username harus diisi!");
+      if (!panelName) return alert("Nama server harus diisi!");
 
       const res = await fetch("/api/create-panel", {
         method: "POST",
@@ -141,6 +126,7 @@
         document.getElementById("username").value = "";
         document.getElementById("panelName").value = "";
         document.getElementById("ram").selectedIndex = 0;
+        // Tampilkan data panel di popup
         showSuccessModal(data);
       } else {
         alert(data.error || "Gagal membuat panel");
@@ -148,69 +134,42 @@
     });
 
     function showSuccessModal(data = {}) {
-      const today = new Date();
-      const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-      const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-      const tglFormat = `${hari[today.getDay()]}, ${today.getDate()}/${bulan[today.getMonth()]}/${today.getFullYear()}`;
-      const ramValue = document.getElementById("ram").value;
-      const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
-
       document.getElementById("panelAccessInfo").innerHTML = `
-        <div class="text-white text-left text-sm sm:text-base leading-relaxed space-y-3">
-          <p><b>Berikut detail akun panel kamu</b></p>
-          <div>📡 <b>Server ID:</b> ${data.server_id || '19'}</div>
-          <div>👤 <b>Username:</b> <span id="toCopyUser" class="select-all">${data.username || '-'}</span>
-            <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button>
-          </div>
-          <div>🔐 <b>Password:</b> <span id="toCopyPass" class="select-all">${data.password || '-'}</span>
-            <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button>
-          </div>
-          <div>🗓️ <b>Tanggal Aktivasi:</b> ${tglFormat}</div>
-          <p class="mt-4"><b>⚙️ Spesifikasi server panel</b></p>
-          <ul class="list-disc pl-5">
-            <li>RAM: ${ramDisplay}</li>
-            <li>Disk: Unlimited</li>
-            <li>CPU: Unlimited</li>
-            <li>Panel: <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span>
-              <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button>
-            </li>
-          </ul>
-          <p class="mt-4"><b>Rules pembelian panel :</b></p>
-          <ul class="list-disc pl-5">
-            <li>Masa aktif 30 hari</li>
-            <li>Data bersifat pribadi, mohon disimpan dengan aman</li>
-            <li>Garansi berlaku 15 hari (1x replace)</li>
-            <li>Klaim garansi wajib menyertakan bukti chat pembelian</li>
-          </ul>
-        </div>`;
+        <div>
+          <b>👤 Username:</b> 
+          <span id="toCopyUser" class="select-all">${data.username || '-'}</span>
+          <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button>
+        </div>
+        <div>
+          <b>🔑 Password:</b> 
+          <span id="toCopyPass" class="select-all">${data.password || '-'}</span>
+          <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button>
+        </div>
+        <div>
+          <b>🌐 Domain Panel:</b> 
+          <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span>
+          <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button>
+        </div>
+      `;
       document.getElementById("successModal").classList.remove("hidden");
+    }
+
+    // Fungsi salin ke clipboard
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text);
     }
 
     function closeSuccessModal() {
       document.getElementById("successModal").classList.add("hidden");
     }
 
-    function copyText(id) {
-      const text = document.getElementById(id).textContent;
-      navigator.clipboard.writeText(text);
-    }
-
+    // Fungsi logout
     function logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
       window.location.href = "/";
     }
-
-    // Proteksi: modal close auto saat load, esc, klik luar
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("successModal").classList.add("hidden");
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeSuccessModal();
-    });
-    document.getElementById("successModal").addEventListener("click", (e) => {
-      if (e.target.id === "successModal") closeSuccessModal();
-    });
   </script>
 </body>
 </html>
