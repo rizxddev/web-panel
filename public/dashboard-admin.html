@@ -5,259 +5,223 @@
   <title>Admin Dashboard - RizxMods</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .glass { background:rgba(34,44,68,0.89); box-shadow:0 6px 32px 0 rgba(17,27,39,0.17);}
+    .btn-gradient {background:linear-gradient(90deg,#6366f1 0,#60a5fa 100%); color:#fff; font-weight:600;}
+    .btn-gradient-green {background:linear-gradient(90deg,#22d3ee 0,#22c55e 100%); color:#fff; font-weight:600;}
+    .btn-red {background:linear-gradient(90deg,#f43f5e 0,#f59e42 100%); color:#fff;}
+    @keyframes pop {0%{transform:scale(.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
+    .animate-pop{animation:pop .25s cubic-bezier(.4,2,.6,1);}
+    @keyframes celebrate {0%,100%{transform:rotate(0);}20%{transform:rotate(-10deg);}40%{transform:rotate(10deg);}60%{transform:rotate(-6deg);}80%{transform:rotate(6deg);}}
+    .animate-celebrate{animation:celebrate .9s;}
+    @keyframes fadein{from{opacity:0;transform:translateY(-24px);}to{opacity:1;transform:translateY(0);}}
+    .animate-fadein{animation:fadein .8s cubic-bezier(.4,2,.6,1);}
+  </style>
 </head>
-<body class="bg-slate-900 text-white relative">
+<body class="bg-gradient-to-tr from-[#101425] via-[#182237] to-[#233066] min-h-screen pb-10">
 
-  <!-- Tombol Logout -->
-  <button onclick="logout()" class="absolute top-6 right-6 bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-lg font-bold shadow text-white text-base transition active:scale-95 z-30">
-    Logout
-  </button>
+  <!-- Header -->
+  <div class="sticky top-0 w-full glass px-4 py-4 flex items-center justify-between shadow-xl mb-6 z-10">
+    <div>
+      <span class="text-2xl font-extrabold text-indigo-400">👑 Admin Panel</span>
+      <span class="font-semibold text-slate-300">- RizxMods</span>
+    </div>
+    <button onclick="logout()" class="btn-red transition rounded-lg px-5 py-2 font-bold text-base shadow">Logout</button>
+  </div>
 
-  <!-- ✅ Konten Admin -->
-  <div id="adminContent" class="p-6">
-    <h1 class="text-xl font-bold mb-4">👑 Admin Panel - RizxMods</h1>
-
-    <!-- 🔘 Tombol Tambah Admin & Reseller -->
-    <div class="flex flex-wrap gap-2 mb-4">
-      <button onclick="openAddAdmin()" class="bg-indigo-600 hover:bg-indigo-700 p-2 rounded">+ Tambah Admin Pterodactyl</button>
-      <button onclick="openAddReseller()" class="bg-green-600 hover:bg-green-700 p-2 rounded">+ Tambah Reseller</button>
+  <div class="max-w-3xl mx-auto">
+    <div class="flex flex-wrap gap-3 mb-5">
+      <button onclick="openAddAdmin()" class="btn-gradient transition px-4 py-2 rounded-lg text-base shadow active:scale-95">
+        + Tambah Admin Pterodactyl
+      </button>
+      <button onclick="openAddReseller()" class="btn-gradient-green transition px-4 py-2 rounded-lg text-base shadow active:scale-95">
+        + Tambah Reseller
+      </button>
     </div>
 
-    <!-- 📋 Daftar Reseller -->
-    <div>
-      <h2 class="text-lg font-semibold mb-2">📂 Daftar Reseller</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm" id="resellerTable">
+    <div class="glass p-5 rounded-2xl shadow-xl mb-7">
+      <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+        <span class="text-orange-300 text-2xl">📂</span> Daftar Reseller
+      </h2>
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full text-sm bg-[#232943] rounded-xl overflow-hidden">
           <thead>
-            <tr class="bg-slate-700">
+            <tr class="bg-[#2d3656] text-indigo-300">
               <th class="p-2">Username</th>
               <th class="p-2">Ganti Password</th>
               <th class="p-2">Aksi</th>
             </tr>
           </thead>
-          <tbody class="bg-slate-800"></tbody>
+          <tbody class="text-white" id="resellerTableBody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- 🖥️ List Panel/Server -->
-    <div class="mt-10">
-      <h2 class="text-lg font-semibold mb-2">🖥️ List Panel/Server</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm" id="serverTable">
+    <div class="glass p-5 rounded-2xl shadow-xl mb-10">
+      <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+        <span class="text-cyan-300 text-2xl">🖥️</span> List Panel/Server
+      </h2>
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full text-sm bg-[#232943] rounded-xl overflow-hidden">
           <thead>
-            <tr class="bg-slate-700">
+            <tr class="bg-[#2d3656] text-indigo-300">
               <th class="p-2">ID</th>
               <th class="p-2">Nama Panel</th>
               <th class="p-2">Pemilik</th>
               <th class="p-2">Status</th>
             </tr>
           </thead>
-          <tbody class="bg-slate-800"></tbody>
+          <tbody class="text-white" id="serverTableBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ✅ Modal Tambah Reseller -->
+  <!-- Modal Tambah Reseller -->
   <div id="addResellerModal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 hidden">
-    <form id="addResellerForm" class="bg-slate-800 p-6 rounded w-full max-w-sm mx-4 space-y-3 shadow-xl">
-      <h2 class="text-lg font-bold text-center">➕ Tambah Reseller</h2>
-      <input type="text" id="newResellerUsername" placeholder="Username" required class="w-full p-3 bg-slate-700 rounded" />
-      <input type="password" id="newResellerPassword" placeholder="Password" required class="w-full p-3 bg-slate-700 rounded" />
+    <form id="addResellerForm" class="bg-slate-800 p-6 rounded-2xl w-full max-w-xs sm:max-w-sm mx-2 shadow-xl space-y-4 animate-pop">
+      <h2 class="text-lg font-bold text-center text-indigo-300 mb-2">➕ Tambah Reseller</h2>
+      <input type="text" id="newResellerUsername" placeholder="Username" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      <input type="password" id="newResellerPassword" placeholder="Password" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
       <div class="flex gap-2">
-        <button type="submit" class="bg-green-600 p-2 rounded w-full">Simpan</button>
+        <button type="submit" class="btn-gradient-green p-2 rounded w-full">Simpan</button>
         <button type="button" onclick="closeAddReseller()" class="bg-red-600 p-2 rounded w-full">Batal</button>
       </div>
     </form>
   </div>
 
-  <!-- ✅ Modal Tambah Admin Pterodactyl -->
+  <!-- Modal Tambah Admin -->
   <div id="addAdminModal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 hidden">
-    <form id="addAdminForm" class="bg-slate-800 p-6 rounded w-full max-w-sm mx-4 space-y-3 shadow-xl">
-      <h2 class="text-lg font-bold text-center">➕ Tambah Admin Pterodactyl</h2>
-      <input type="text" id="newAdminUsername" placeholder="Username Admin" required class="w-full p-3 bg-slate-700 rounded" />
+    <form id="addAdminForm" class="bg-slate-800 p-6 rounded-2xl w-full max-w-xs sm:max-w-sm mx-2 shadow-xl space-y-4 animate-pop">
+      <h2 class="text-lg font-bold text-center text-indigo-300 mb-2">👤 Tambah Admin Pterodactyl</h2>
+      <input type="text" id="newAdminUsername" placeholder="Username" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      <div>
+        <label class="text-xs text-slate-300 mb-1 block">Password (acak):</label>
+        <input type="text" id="newAdminPassword" readonly class="w-full p-3 bg-slate-600 rounded focus:outline-none text-slate-300 font-mono" />
+        <button type="button" class="mt-2 text-xs text-green-300 underline" onclick="acakPasswordBaru()">Acak Password Baru</button>
+      </div>
+      <div>
+        <label class="text-xs text-slate-300 mb-1 block">Email (otomatis):</label>
+        <input type="text" id="newAdminEmail" readonly class="w-full p-3 bg-slate-600 rounded focus:outline-none text-slate-300 font-mono" />
+      </div>
       <div class="flex gap-2">
-        <button type="submit" class="bg-indigo-600 p-2 rounded w-full">Simpan</button>
+        <button type="submit" class="btn-gradient p-2 rounded w-full">Tambah Admin</button>
         <button type="button" onclick="closeAddAdmin()" class="bg-red-600 p-2 rounded w-full">Batal</button>
       </div>
-      <p class="text-xs text-slate-400 mt-2 text-center">Password acak & email otomatis dari username.</p>
     </form>
   </div>
 
-  <!-- ✅ Modal Notifikasi Animasi -->
-  <div id="notifyModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
-    <div class="bg-slate-800 px-7 py-7 rounded-2xl shadow-xl text-center animate-pop">
-      <div class="text-3xl mb-2 animate-celebrate" id="notifyIcon">✅</div>
-      <div class="font-bold text-lg mb-2" id="notifyMsg"></div>
-      <button onclick="closeNotifyModal()" class="mt-3 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold shadow animate-btnpop">Tutup</button>
+  <!-- Modal Notifikasi -->
+  <div id="notifyModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
+    <div class="bg-slate-800 px-7 py-8 rounded-2xl shadow-xl text-center animate-pop max-w-xs mx-auto">
+      <div class="text-5xl mb-3 animate-celebrate" id="notifyIcon">🎉</div>
+      <div class="font-bold text-lg mb-2 text-green-400" id="notifyMsg"></div>
+      <div id="notifyData" class="mb-3"></div>
+      <button onclick="closeNotifyModal()" class="mt-1 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-semibold shadow animate-btnpop">Tutup</button>
     </div>
   </div>
-
-  <!-- ✅ Modal Sukses Tambah Admin -->
-  <div id="successAdminModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
-    <div class="bg-slate-800 px-5 py-7 sm:px-8 sm:py-10 rounded-2xl shadow-xl text-center animate-pop w-[95vw] max-w-xs sm:max-w-md">
-      <div class="text-6xl mb-4 animate-celebrate">🎉</div>
-      <div class="font-bold text-2xl sm:text-3xl mb-4 text-indigo-300">Akun Admin Pterodactyl Berhasil Dibuat!</div>
-      <div id="adminAccessInfo" class="mb-2 text-white space-y-3"></div>
-      <button onclick="closeSuccessAdminModal()" class="mt-6 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold text-lg shadow w-full transition active:scale-95">
-        Tutup
-      </button>
-    </div>
-  </div>
-
-  <style>
-    @keyframes pop {
-      0% { transform: scale(0.8); opacity: 0;}
-      100% { transform: scale(1); opacity: 1;}
-    }
-    .animate-pop { animation: pop 0.25s cubic-bezier(.4,2,.6,1);}
-    @keyframes celebrate {
-      0%,100% { transform: rotate(0deg);}
-      20% { transform: rotate(-10deg);}
-      40% { transform: rotate(10deg);}
-      60% { transform: rotate(-6deg);}
-      80% { transform: rotate(6deg);}
-    }
-    .animate-celebrate { animation: celebrate 0.9s; }
-    @keyframes btnpop {
-      0% { transform: scale(0.95);}
-      100% { transform: scale(1);}
-    }
-    .animate-btnpop { animation: btnpop 0.22s; }
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(-24px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-    .animate-fadein { animation: fadein 0.8s cubic-bezier(.4,2,.6,1);}
-    .copy-btn {
-      cursor: pointer;
-      padding: 3px 9px;
-      background: #262b3b;
-      color: #67e8f9;
-      border-radius: 6px;
-      font-size: 0.95em;
-      margin-left: 8px;
-      transition: background 0.15s;
-      border: none;
-    }
-    .copy-btn:hover { background: #334155; color: #38bdf8;}
-    .select-all { user-select: all; }
-  </style>
 
   <script>
-    // Auth check: harus login sebagai admin!
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-    if (!token || role !== "admin") {
-      window.location.href = "/login-admin.html";
+    // Logout
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      window.location.href = "/";
     }
 
-    // Modal notifikasi animasi
-    function showNotifyModal(msg, icon="✅") {
+    // Notifikasi + clipboard
+    function showNotifyModal(msg, icon = "✅", data = null) {
       document.getElementById("notifyMsg").innerText = msg;
       document.getElementById("notifyIcon").innerText = icon;
+      const dataDiv = document.getElementById("notifyData");
+      if (data && typeof data === "object") {
+        dataDiv.innerHTML = `
+          <div class="text-left text-base text-indigo-200 mb-2">
+            <b>Username:</b> <span id="copy-username">${data.username}</span>
+            <button onclick="copyToClipboard('${data.username}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+            <b>Password:</b> <span id="copy-password">${data.password}</span>
+            <button onclick="copyToClipboard('${data.password}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+            <b>Email:</b> <span id="copy-email">${data.email}</span>
+            <button onclick="copyToClipboard('${data.email}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+            <b>Domain:</b> <span id="copy-domain">${data.domain}</span>
+            <button onclick="copyToClipboard('${data.domain}')" class="text-xs text-green-300 underline ml-1">Salin</button>
+          </div>`;
+      } else dataDiv.innerHTML = "";
       document.getElementById("notifyModal").classList.remove("hidden");
     }
-    function closeNotifyModal() {
-      document.getElementById("notifyModal").classList.add("hidden");
+    function closeNotifyModal() { document.getElementById("notifyModal").classList.add("hidden"); }
+    function copyToClipboard(txt) {
+      navigator.clipboard.writeText(txt);
+      showNotifyModal("Tersalin ke clipboard!", "✅");
+      setTimeout(closeNotifyModal, 1000);
     }
 
-    // ➕ Modal Tambah Reseller
-    function openAddReseller() {
-      document.getElementById("addResellerModal").classList.remove("hidden");
-    }
-    function closeAddReseller() {
-      document.getElementById("addResellerModal").classList.add("hidden");
-    }
-
-    // 📝 Tambah Reseller
+    // Modal tambah reseller
+    function openAddReseller() { document.getElementById("addResellerModal").classList.remove("hidden"); }
+    function closeAddReseller() { document.getElementById("addResellerModal").classList.add("hidden"); }
     document.getElementById("addResellerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("newResellerUsername").value.trim();
       const password = document.getElementById("newResellerPassword").value.trim();
       const res = await fetch("/api/resellers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
       if (res.ok) {
-        closeAddReseller();
-        loadResellers();
+        closeAddReseller(); loadResellers();
         showNotifyModal("Reseller ditambahkan!", "✅");
       } else {
         showNotifyModal("Gagal menambah reseller.", "❌");
       }
     });
 
-    // ➕ Modal Tambah Admin Pterodactyl
+    // Modal tambah admin
     function openAddAdmin() {
       document.getElementById("addAdminModal").classList.remove("hidden");
+      document.getElementById("newAdminUsername").value = "";
+      acakPasswordBaru();
+      document.getElementById("newAdminEmail").value = "";
     }
-    function closeAddAdmin() {
-      document.getElementById("addAdminModal").classList.add("hidden");
+    function closeAddAdmin() { document.getElementById("addAdminModal").classList.add("hidden"); }
+    function acakPasswordBaru() {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let pass = '';
+      for (let i = 0; i < 10; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      document.getElementById("newAdminPassword").value = pass;
     }
-
-    // 📝 Tambah Admin Pterodactyl
+    document.getElementById("newAdminUsername").addEventListener("input", function() {
+      document.getElementById("newAdminEmail").value = this.value.trim() ? this.value.trim() + "@gmail.com" : "";
+    });
     document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("newAdminUsername").value.trim();
-      // Email otomatis & password random di backend!
+      const password = document.getElementById("newAdminPassword").value.trim();
+      const email = document.getElementById("newAdminEmail").value.trim();
       const res = await fetch("/api/admins", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, email })
       });
       const data = await res.json();
       if (res.ok) {
         closeAddAdmin();
-        showSuccessAdminModal({ username: data.username, password: data.password, domain: data.domain });
+        showNotifyModal("Akun admin berhasil dibuat!", "🎉", {username, password, email, domain: window.location.origin});
       } else {
-        showNotifyModal(data.error || "Gagal menambah admin panel.", "❌");
+        showNotifyModal(data.error || "Gagal membuat admin.", "❌");
       }
     });
 
-    // Modal Sukses Tambah Admin + Copy Data Akun
-    function showSuccessAdminModal(data = {}) {
-      document.getElementById("adminAccessInfo").innerHTML = `
-        <div>
-          <b>👤 Username:</b>
-          <span id="adminCopyUser" class="select-all">${data.username || '-'}</span>
-          <button class="copy-btn" onclick="copyText('adminCopyUser')">Salin</button>
-        </div>
-        <div>
-          <b>🔑 Password:</b>
-          <span id="adminCopyPass" class="select-all">${data.password || '-'}</span>
-          <button class="copy-btn" onclick="copyText('adminCopyPass')">Salin</button>
-        </div>
-        <div>
-          <b>🌐 Domain Panel:</b>
-          <span id="adminCopyDomain" class="select-all">${data.domain || (window.location.origin)}</span>
-          <button class="copy-btn" onclick="copyText('adminCopyDomain')">Salin</button>
-        </div>
-      `;
-      document.getElementById("successAdminModal").classList.remove("hidden");
-    }
-    function closeSuccessAdminModal() {
-      document.getElementById("successAdminModal").classList.add("hidden");
-    }
-
-    // Fungsi copy ke clipboard
-    function copyText(id) {
-      const text = document.getElementById(id).textContent;
-      navigator.clipboard.writeText(text);
-    }
-
-    // 📋 List Reseller + Ganti Password
+    // List reseller
     async function loadResellers() {
-      const tbody = document.querySelector('#resellerTable tbody');
-      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center'>Memuat...</td></tr>";
+      const tbody = document.getElementById('resellerTableBody');
+      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
       try {
         const res = await fetch("/api/resellers");
         const data = await res.json();
         let resArr = Array.isArray(data) ? data : data.resellers || [];
         if (!resArr.length) {
-          tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center'>Belum ada reseller.</td></tr>";
+          tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-400'>Belum ada reseller.</td></tr>";
           return;
         }
         tbody.innerHTML = "";
@@ -266,11 +230,11 @@
             <tr>
               <td class="p-2">@${r.username}</td>
               <td class="p-2">
-                <input type="password" id="newpass-${r.username}" class="bg-slate-700 rounded px-2 text-sm" placeholder="Password baru" />
-                <button onclick="gantiPasswordReseller('${r.username}')" class="ml-2 bg-yellow-500 text-slate-900 px-2 rounded text-xs">Simpan</button>
+                <input type="password" id="newpass-${r.username}" class="bg-[#212738] rounded px-2 text-sm text-white border border-indigo-800" placeholder="Password baru" />
+                <button onclick="gantiPasswordReseller('${r.username}')" class="ml-2 bg-yellow-400 text-slate-900 px-2 rounded text-xs font-bold">Simpan</button>
               </td>
               <td class="p-2">
-                <button onclick="deleteReseller('${r.username}')" class="bg-red-600 rounded px-2 text-xs">Hapus</button>
+                <button onclick="deleteReseller('${r.username}')" class="bg-red-600 rounded px-2 text-xs font-bold">Hapus</button>
               </td>
             </tr>
           `;
@@ -280,13 +244,12 @@
       }
     }
 
-    // 🔑 Ganti Password Reseller
+    // Ganti password reseller
     async function gantiPasswordReseller(username) {
       const newPassword = document.getElementById('newpass-' + username).value.trim();
       if (!newPassword) return showNotifyModal('Password baru wajib diisi', "⚠️");
       const res = await fetch('/api/resellers', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, newPassword })
       });
       const msg = await res.json();
@@ -294,12 +257,11 @@
       loadResellers();
     }
 
-    // ❌ Hapus Reseller
+    // Hapus reseller
     async function deleteReseller(username) {
       if (!confirm(`Yakin ingin menghapus reseller "${username}"?`)) return;
       const res = await fetch("/api/resellers", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        method: "DELETE", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username })
       });
       if (res.ok) {
@@ -310,22 +272,23 @@
       }
     }
 
-    // 🖥️ List Server/Panel
+    // List Panel/Server
     async function loadServers() {
-      const tbody = document.querySelector('#serverTable tbody');
-      tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center'>Memuat...</td></tr>";
+      const tbody = document.getElementById('serverTableBody');
+      tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
       try {
         const res = await fetch("/api/list-panels");
         const data = await res.json();
-        if (!Array.isArray(data) || !data.length) {
-          tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center'>Belum ada panel/server.</td></tr>";
+        let arr = Array.isArray(data) ? data : data.servers || [];
+        if (!arr.length) {
+          tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-400'>Belum ada panel/server.</td></tr>";
           return;
         }
         tbody.innerHTML = "";
-        data.forEach(s => {
+        arr.forEach(s => {
           tbody.innerHTML += `
             <tr>
-              <td class="p-2">${s.id || ''}</td>
+              <td class="p-2">${s.id || s.uuid || ''}</td>
               <td class="p-2">${s.name || ''}</td>
               <td class="p-2">${s.owner || ''}</td>
               <td class="p-2">${s.status || ''}</td>
@@ -337,17 +300,10 @@
       }
     }
 
-    // INIT
+    // Jalankan setelah halaman ready
     window.onload = function() {
       loadResellers();
       loadServers();
-    }
-
-    // Fungsi logout
-    function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      window.location.href = "/";
     }
   </script>
 </body>
