@@ -24,9 +24,9 @@
 
   <!-- Header -->
   <div class="sticky top-0 w-full glass px-4 py-4 flex items-center justify-between shadow-xl mb-6 z-10">
-    <div>
+    <div class="flex items-center gap-2">
       <span class="text-2xl font-extrabold text-indigo-400">👑 Admin Panel</span>
-      <span class="font-semibold text-slate-300">- RizxMods</span>
+      <span class="font-semibold text-indigo-500 ml-2 tracking-wide text-lg">RizxMods</span>
     </div>
     <button onclick="logout()" class="btn-red transition rounded-lg px-5 py-2 font-bold text-base shadow">Logout</button>
   </div>
@@ -122,189 +122,194 @@
       <button onclick="closeNotifyModal()" class="mt-1 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-semibold shadow animate-btnpop">Tutup</button>
     </div>
   </div>
-
+  
   <script>
-    // Logout
-    function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      window.location.href = "/";
-    }
+  // Logout
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
+  }
 
-    // Notifikasi + clipboard
-    function showNotifyModal(msg, icon = "✅", data = null) {
-      document.getElementById("notifyMsg").innerText = msg;
-      document.getElementById("notifyIcon").innerText = icon;
-      const dataDiv = document.getElementById("notifyData");
-      if (data && typeof data === "object") {
-        dataDiv.innerHTML = `
-          <div class="text-left text-base text-indigo-200 mb-2">
-            <b>Username:</b> <span id="copy-username">${data.username}</span>
-            <button onclick="copyToClipboard('${data.username}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-            <b>Password:</b> <span id="copy-password">${data.password}</span>
-            <button onclick="copyToClipboard('${data.password}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-            <b>Email:</b> <span id="copy-email">${data.email}</span>
-            <button onclick="copyToClipboard('${data.email}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-            <b>Domain:</b> <span id="copy-domain">${data.domain}</span>
-            <button onclick="copyToClipboard('${data.domain}')" class="text-xs text-green-300 underline ml-1">Salin</button>
-          </div>`;
-      } else dataDiv.innerHTML = "";
-      document.getElementById("notifyModal").classList.remove("hidden");
-    }
-    function closeNotifyModal() { document.getElementById("notifyModal").classList.add("hidden"); }
-    function copyToClipboard(txt) {
-      navigator.clipboard.writeText(txt);
-      showNotifyModal("Tersalin ke clipboard!", "✅");
-      setTimeout(closeNotifyModal, 1000);
-    }
+  // Notifikasi + clipboard
+  function showNotifyModal(msg, icon = "✅", data = null) {
+    document.getElementById("notifyMsg").innerText = msg;
+    document.getElementById("notifyIcon").innerText = icon;
+    const dataDiv = document.getElementById("notifyData");
+    if (data && typeof data === "object") {
+      dataDiv.innerHTML = `
+        <div class="text-left text-base text-indigo-200 mb-2">
+          <b>Username:</b> <span id="copy-username">${data.username}</span>
+          <button onclick="copyToClipboard('${data.username}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+          <b>Password:</b> <span id="copy-password">${data.password}</span>
+          <button onclick="copyToClipboard('${data.password}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+          <b>Email:</b> <span id="copy-email">${data.email}</span>
+          <button onclick="copyToClipboard('${data.email}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
+          <b>Domain:</b> <span id="copy-domain">${data.domain}</span>
+          <button onclick="copyToClipboard('${data.domain}')" class="text-xs text-green-300 underline ml-1">Salin</button>
+        </div>`;
+    } else dataDiv.innerHTML = "";
+    document.getElementById("notifyModal").classList.remove("hidden");
+  }
+  function closeNotifyModal() { document.getElementById("notifyModal").classList.add("hidden"); }
+  function copyToClipboard(txt) {
+    navigator.clipboard.writeText(txt);
+    showNotifyModal("Tersalin ke clipboard!", "✅");
+    setTimeout(closeNotifyModal, 1000);
+  }
 
-    // Modal tambah reseller
-    function openAddReseller() { document.getElementById("addResellerModal").classList.remove("hidden"); }
-    function closeAddReseller() { document.getElementById("addResellerModal").classList.add("hidden"); }
-    document.getElementById("addResellerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("newResellerUsername").value.trim();
-      const password = document.getElementById("newResellerPassword").value.trim();
-      const res = await fetch("/api/resellers", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-      if (res.ok) {
-        closeAddReseller(); loadResellers();
-        showNotifyModal("Reseller ditambahkan!", "✅");
-      } else {
-        showNotifyModal("Gagal menambah reseller.", "❌");
-      }
+  // Modal tambah reseller
+  function openAddReseller() { 
+    closeAddAdmin();
+    document.getElementById("addResellerModal").classList.remove("hidden"); 
+  }
+  function closeAddReseller() { document.getElementById("addResellerModal").classList.add("hidden"); }
+
+  document.getElementById("addResellerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("newResellerUsername").value.trim();
+    const password = document.getElementById("newResellerPassword").value.trim();
+    const res = await fetch("/api/resellers", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
     });
+    if (res.ok) {
+      closeAddReseller(); loadResellers();
+      showNotifyModal("Reseller ditambahkan!", "✅");
+    } else {
+      showNotifyModal("Gagal menambah reseller.", "❌");
+    }
+  });
 
-    // Modal tambah admin
-    function openAddAdmin() {
-      document.getElementById("addAdminModal").classList.remove("hidden");
-      document.getElementById("newAdminUsername").value = "";
-      acakPasswordBaru();
-      document.getElementById("newAdminEmail").value = "";
-    }
-    function closeAddAdmin() { document.getElementById("addAdminModal").classList.add("hidden"); }
-    function acakPasswordBaru() {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let pass = '';
-      for (let i = 0; i < 10; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-      document.getElementById("newAdminPassword").value = pass;
-    }
-    document.getElementById("newAdminUsername").addEventListener("input", function() {
-      document.getElementById("newAdminEmail").value = this.value.trim() ? this.value.trim() + "@gmail.com" : "";
+  // Modal tambah admin
+  function openAddAdmin() {
+    closeAddReseller();
+    document.getElementById("addAdminModal").classList.remove("hidden");
+    document.getElementById("newAdminUsername").value = "";
+    acakPasswordBaru();
+    document.getElementById("newAdminEmail").value = "";
+  }
+  function closeAddAdmin() { document.getElementById("addAdminModal").classList.add("hidden"); }
+  function acakPasswordBaru() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let pass = '';
+    for (let i = 0; i < 10; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    document.getElementById("newAdminPassword").value = pass;
+  }
+  document.getElementById("newAdminUsername").addEventListener("input", function() {
+    document.getElementById("newAdminEmail").value = this.value.trim() ? this.value.trim() + "@gmail.com" : "";
+  });
+  document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("newAdminUsername").value.trim();
+    const password = document.getElementById("newAdminPassword").value.trim();
+    const email = document.getElementById("newAdminEmail").value.trim();
+    const res = await fetch("/api/admins", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, email })
     });
-    document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("newAdminUsername").value.trim();
-      const password = document.getElementById("newAdminPassword").value.trim();
-      const email = document.getElementById("newAdminEmail").value.trim();
-      const res = await fetch("/api/admins", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, email })
-      });
+    const data = await res.json();
+    if (res.ok) {
+      closeAddAdmin();
+      showNotifyModal("Akun admin berhasil dibuat!", "🎉", {username, password, email, domain: window.location.origin});
+    } else {
+      showNotifyModal(data.error || "Gagal membuat admin.", "❌");
+    }
+  });
+
+  // List reseller
+  async function loadResellers() {
+    const tbody = document.getElementById('resellerTableBody');
+    tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
+    try {
+      const res = await fetch("/api/resellers");
       const data = await res.json();
-      if (res.ok) {
-        closeAddAdmin();
-        showNotifyModal("Akun admin berhasil dibuat!", "🎉", {username, password, email, domain: window.location.origin});
-      } else {
-        showNotifyModal(data.error || "Gagal membuat admin.", "❌");
+      let resArr = Array.isArray(data) ? data : data.resellers || [];
+      if (!resArr.length) {
+        tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-400'>Belum ada reseller.</td></tr>";
+        return;
       }
+      tbody.innerHTML = "";
+      resArr.forEach(r => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="p-2">@${r.username}</td>
+            <td class="p-2">
+              <input type="password" id="newpass-${r.username}" class="bg-[#212738] rounded px-2 text-sm text-white border border-indigo-800" placeholder="Password baru" />
+              <button onclick="gantiPasswordReseller('${r.username}')" class="ml-2 bg-yellow-400 text-slate-900 px-2 rounded text-xs font-bold">Simpan</button>
+            </td>
+            <td class="p-2">
+              <button onclick="deleteReseller('${r.username}')" class="bg-red-600 rounded px-2 text-xs font-bold">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    } catch {
+      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
+    }
+  }
+
+  // Ganti password reseller
+  async function gantiPasswordReseller(username) {
+    const newPassword = document.getElementById('newpass-' + username).value.trim();
+    if (!newPassword) return showNotifyModal('Password baru wajib diisi', "⚠️");
+    const res = await fetch('/api/resellers', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, newPassword })
     });
+    const msg = await res.json();
+    showNotifyModal(msg.error || msg.message, msg.error ? "❌" : "✅");
+    loadResellers();
+  }
 
-    // List reseller
-    async function loadResellers() {
-      const tbody = document.getElementById('resellerTableBody');
-      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
-      try {
-        const res = await fetch("/api/resellers");
-        const data = await res.json();
-        let resArr = Array.isArray(data) ? data : data.resellers || [];
-        if (!resArr.length) {
-          tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-400'>Belum ada reseller.</td></tr>";
-          return;
-        }
-        tbody.innerHTML = "";
-        resArr.forEach(r => {
-          tbody.innerHTML += `
-            <tr>
-              <td class="p-2">@${r.username}</td>
-              <td class="p-2">
-                <input type="password" id="newpass-${r.username}" class="bg-[#212738] rounded px-2 text-sm text-white border border-indigo-800" placeholder="Password baru" />
-                <button onclick="gantiPasswordReseller('${r.username}')" class="ml-2 bg-yellow-400 text-slate-900 px-2 rounded text-xs font-bold">Simpan</button>
-              </td>
-              <td class="p-2">
-                <button onclick="deleteReseller('${r.username}')" class="bg-red-600 rounded px-2 text-xs font-bold">Hapus</button>
-              </td>
-            </tr>
-          `;
-        });
-      } catch {
-        tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
-      }
-    }
-
-    // Ganti password reseller
-    async function gantiPasswordReseller(username) {
-      const newPassword = document.getElementById('newpass-' + username).value.trim();
-      if (!newPassword) return showNotifyModal('Password baru wajib diisi', "⚠️");
-      const res = await fetch('/api/resellers', {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, newPassword })
-      });
-      const msg = await res.json();
-      showNotifyModal(msg.error || msg.message, msg.error ? "❌" : "✅");
+  // Hapus reseller
+  async function deleteReseller(username) {
+    if (!confirm(`Yakin ingin menghapus reseller "${username}"?`)) return;
+    const res = await fetch("/api/resellers", {
+      method: "DELETE", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username })
+    });
+    if (res.ok) {
       loadResellers();
+      showNotifyModal("Reseller dihapus!", "✅");
+    } else {
+      showNotifyModal("Gagal menghapus reseller.", "❌");
     }
-
-    // Hapus reseller
-    async function deleteReseller(username) {
-      if (!confirm(`Yakin ingin menghapus reseller "${username}"?`)) return;
-      const res = await fetch("/api/resellers", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
+  }
+  
+  // List Panel/Server
+  async function loadServers() {
+    const tbody = document.getElementById('serverTableBody');
+    tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
+    try {
+      const res = await fetch("/api/list-panels");
+      const data = await res.json();
+      let arr = Array.isArray(data) ? data : data.servers || [];
+      if (!arr.length) {
+        tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-400'>Belum ada panel/server.</td></tr>";
+        return;
+      }
+      tbody.innerHTML = "";
+      arr.forEach(s => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="p-2">${s.id || s.uuid || ''}</td>
+            <td class="p-2">${s.name || ''}</td>
+            <td class="p-2">${s.owner || ''}</td>
+            <td class="p-2">${s.status || ''}</td>
+          </tr>
+        `;
       });
-      if (res.ok) {
-        loadResellers();
-        showNotifyModal("Reseller dihapus!", "✅");
-      } else {
-        showNotifyModal("Gagal menghapus reseller.", "❌");
-      }
+    } catch {
+      tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
     }
+  }
 
-    // List Panel/Server
-    async function loadServers() {
-      const tbody = document.getElementById('serverTableBody');
-      tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
-      try {
-        const res = await fetch("/api/list-panels");
-        const data = await res.json();
-        let arr = Array.isArray(data) ? data : data.servers || [];
-        if (!arr.length) {
-          tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-400'>Belum ada panel/server.</td></tr>";
-          return;
-        }
-        tbody.innerHTML = "";
-        arr.forEach(s => {
-          tbody.innerHTML += `
-            <tr>
-              <td class="p-2">${s.id || s.uuid || ''}</td>
-              <td class="p-2">${s.name || ''}</td>
-              <td class="p-2">${s.owner || ''}</td>
-              <td class="p-2">${s.status || ''}</td>
-            </tr>
-          `;
-        });
-      } catch {
-        tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
-      }
-    }
-
-    // Jalankan setelah halaman ready
-    window.onload = function() {
-      loadResellers();
-      loadServers();
-    }
-  </script>
+  // Jalankan saat halaman ready
+  window.onload = function() {
+    loadResellers();
+    loadServers();
+  }
+</script>
 </body>
 </html>
