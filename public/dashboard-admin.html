@@ -5,13 +5,13 @@
   <title>Admin Dashboard - RizxMods</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script>
-  // Proteksi halaman, hanya untuk admin
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-  if (!token || role !== "admin") {
-    window.location.href = "/login-admin.html";
-  }
-</script>
+    // Proteksi halaman, hanya untuk admin
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "admin") {
+      window.location.href = "/login-admin.html";
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -29,6 +29,8 @@
   </style>
 </head>
 <body class="bg-gradient-to-tr from-[#101425] via-[#182237] to-[#233066] min-h-screen pb-10">
+  <!-- Toast Popup Error -->
+  <div id="toastError" class="fixed bottom-6 right-4 z-50 hidden px-5 py-3 bg-red-600 text-white font-semibold rounded-xl shadow-xl animate-pop"></div>
 
   <!-- Header -->
   <div class="sticky top-0 w-full glass px-4 py-4 flex items-center justify-between shadow-xl mb-6 z-10">
@@ -130,8 +132,16 @@
       <button onclick="closeNotifyModal()" class="mt-1 px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-semibold shadow animate-btnpop">Tutup</button>
     </div>
   </div>
-  
+
   <script>
+  // Toast popup error
+  function showToastError(msg) {
+    const toast = document.getElementById('toastError');
+    toast.innerText = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2200);
+  }
+
   // Logout
   function logout() {
     localStorage.removeItem("token");
@@ -185,7 +195,7 @@
       closeAddReseller(); loadResellers();
       showNotifyModal("Reseller ditambahkan!", "✅");
     } else {
-      showNotifyModal("Gagal menambah reseller.", "❌");
+      showToastError("Gagal menambah reseller.");
     }
   });
 
@@ -221,7 +231,7 @@
       closeAddAdmin();
       showNotifyModal("Akun admin berhasil dibuat!", "🎉", {username, password, email, domain: window.location.origin});
     } else {
-      showNotifyModal(data.error || "Gagal membuat admin.", "❌");
+      showToastError(data.error || "Gagal membuat admin.");
     }
   });
 
@@ -260,14 +270,18 @@
   // Ganti password reseller
   async function gantiPasswordReseller(username) {
     const newPassword = document.getElementById('newpass-' + username).value.trim();
-    if (!newPassword) return showNotifyModal('Password baru wajib diisi', "⚠️");
+    if (!newPassword) return showToastError('Password baru wajib diisi');
     const res = await fetch('/api/resellers', {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, newPassword })
     });
     const msg = await res.json();
-    showNotifyModal(msg.error || msg.message, msg.error ? "❌" : "✅");
-    loadResellers();
+    if (msg.error) {
+      showToastError(msg.error);
+    } else {
+      showNotifyModal(msg.message || "Berhasil ganti password.", "✅");
+      loadResellers();
+    }
   }
 
   // Hapus reseller
@@ -281,10 +295,10 @@
       loadResellers();
       showNotifyModal("Reseller dihapus!", "✅");
     } else {
-      showNotifyModal("Gagal menghapus reseller.", "❌");
+      showToastError("Gagal menghapus reseller.");
     }
   }
-  
+
   // List Panel/Server
   async function loadServers() {
     const tbody = document.getElementById('serverTableBody');
@@ -318,6 +332,6 @@
     loadResellers();
     loadServers();
   }
-</script>
+  </script>
 </body>
 </html>
