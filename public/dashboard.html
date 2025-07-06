@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard Reseller - RizxMods</title>
@@ -14,27 +15,34 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-900 relative">  <!-- Tombol Logout -->  <button onclick="logout()" class="absolute top-6 right-6 bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-lg font-bold shadow text-white text-base transition active:scale-95 z-30">
+<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-900 relative">
+
+  <!-- Tombol Logout -->
+  <button onclick="logout()" class="absolute top-6 right-6 bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-lg font-bold shadow text-white text-base transition active:scale-95 z-30">
     Logout
-  </button>  <div class="mb-10 text-center animate-fadein">
+  </button>
+
+  <div class="mb-10 text-center animate-fadein">
     <h2 class="text-3xl font-extrabold mb-2 drop-shadow">🚀 Panel Reseller RizxMods</h2>
     <div class="text-indigo-200 text-base font-medium">Buat server Pterodactyl dengan mudah & cepat</div>
-  </div>  <form id="createPanelForm" class="bg-slate-800/80 border border-indigo-500/30 shadow-xl p-8 rounded-2xl max-w-md w-full space-y-5 animate-pop">
+  </div>
+
+  <form id="createPanelForm" class="bg-slate-800/80 border border-indigo-500/30 shadow-xl p-8 rounded-2xl max-w-md w-full space-y-5 animate-pop">
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.606 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.606 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
       </span>
       <input type="text" id="username" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Username Panel" required />
     </div>
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" /></svg>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" /></svg>
       </span>
       <input type="text" id="panelName" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nama Server" required />
     </div>
     <div class="flex items-center gap-2">
       <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       </span>
       <select id="ram" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         <option value="1024">RAM 1 GB</option>
@@ -50,9 +58,13 @@
         <option value="0">RAM Unlimited</option>
       </select>
     </div>
-    <button class="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 p-3 rounded-xl w-full font-bold text-lg text-white shadow-lg transition-transform active:scale-95" type="submit">🚀 Buat Panel</button>
-  </form> <!-- Popup sukses responsive -->
-    <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
+    <button type="submit" class="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 p-3 rounded-xl w-full font-bold text-lg text-white shadow-lg transition active:scale-95">
+      🚀 Buat Panel
+    </button>
+  </form>
+
+  <!-- Modal Sukses -->
+  <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
     <div class="bg-slate-800 px-5 py-7 sm:px-8 sm:py-10 rounded-2xl shadow-xl text-center animate-pop w-[95vw] max-w-xs sm:max-w-md">
       <div class="text-6xl mb-4 animate-celebrate">🎊</div>
       <div class="font-bold text-2xl sm:text-3xl mb-4 text-green-400">Panel berhasil dibuat!</div>
@@ -66,7 +78,57 @@
         </button>
       </div>
     </div>
-  </div>  <script>
+  </div>
+
+  <style>
+    @keyframes pop { 0% { transform: scale(0.8); opacity: 0;} 100% { transform: scale(1); opacity: 1; } }
+    .animate-pop { animation: pop 0.25s cubic-bezier(.4,2,.6,1); }
+    @keyframes fadein { from { opacity: 0; transform: translateY(-24px);} to { opacity: 1; transform: translateY(0); } }
+    .animate-fadein { animation: fadein 0.8s cubic-bezier(.4,2,.6,1); }
+    @keyframes celebrate {
+      0%,100% { transform: rotate(0deg);} 20% { transform: rotate(-10deg);} 40% { transform: rotate(10deg);}
+      60% { transform: rotate(-6deg);} 80% { transform: rotate(6deg);}
+    }
+    .animate-celebrate { animation: celebrate 0.9s; }
+    .copy-btn {
+      cursor: pointer; padding: 3px 9px; background: #262b3b; color: #67e8f9;
+      border-radius: 6px; font-size: 0.9em; margin-left: 8px; border: none;
+    }
+    .copy-btn:hover { background: #334155; color: #38bdf8; }
+    .select-all { user-select: all; }
+  </style>
+
+  <script>
+    document.getElementById("createPanelForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const panelName = document.getElementById("panelName").value.trim();
+      const ram = document.getElementById("ram").value;
+      const email = username + "@gmail.com";
+
+      if (!username || !panelName) return alert("Semua kolom harus diisi!");
+
+      try {
+        const res = await fetch("/api/create-panel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, serverName: panelName, ram, cpu: 0 })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("username").value = "";
+          document.getElementById("panelName").value = "";
+          document.getElementById("ram").selectedIndex = 0;
+          showSuccessModal(data);
+        } else {
+          alert(data?.error || "Gagal membuat panel");
+        }
+      } catch {
+        alert("Terjadi kesalahan koneksi.");
+      }
+    });
+
     function showSuccessModal(data = {}) {
       const today = new Date();
       const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -74,6 +136,7 @@
       const tglFormat = `${hari[today.getDay()]}, ${today.getDate()}/${bulan[today.getMonth()]}/${today.getFullYear()}`;
       const ramValue = document.getElementById("ram").value;
       const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
+
       document.getElementById("panelAccessInfo").innerHTML = `
         <p><b>Berikut detail akun panel kamu</b></p>
         <div>📡 <b>Server ID:</b> ${data.server_id || '19'}</div>
@@ -104,9 +167,9 @@
     }
 
     function copyAllPanelInfo() {
-      const text = document.getElementById("panelAccessInfo").cloneNode(true);
-      text.querySelectorAll(".copy-btn").forEach(btn => btn.remove());
-      navigator.clipboard.writeText(text.innerText.trim()).then(() => alert("Berhasil disalin semua!"));
+      const clone = document.getElementById("panelAccessInfo").cloneNode(true);
+      clone.querySelectorAll(".copy-btn").forEach(btn => btn.remove());
+      navigator.clipboard.writeText(clone.innerText.trim()).then(() => alert("Berhasil disalin semua!"));
     }
 
     function closeSuccessModal() {
@@ -118,5 +181,6 @@
       localStorage.removeItem("role");
       window.location.href = "/";
     }
-  </script></body>
+  </script>
+</body>
 </html>
