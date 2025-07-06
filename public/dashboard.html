@@ -47,9 +47,13 @@
       <div class="text-6xl mb-4 animate-celebrate">🎊</div>
       <div class="font-bold text-2xl sm:text-3xl mb-4 text-green-400">Panel berhasil dibuat!</div>
       <div id="panelAccessInfo" class="mb-5 text-white space-y-3 text-left text-sm sm:text-base leading-relaxed select-all"></div>
-      <div class="flex flex-col sm:flex-row gap-3 w-full">
-        <button onclick="copyAllPanelInfo()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-white font-semibold text-lg shadow w-full transition active:scale-95">Salin Semua</button>
-        <button onclick="closeSuccessModal()" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-white font-semibold text-lg shadow w-full transition active:scale-95">Tutup</button>
+      <div class="w-full space-y-3 mt-6">
+        <button onclick="copyAllPanelInfo()" class="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-white font-semibold text-lg shadow transition active:scale-95">
+          Salin Semua
+        </button>
+        <button onclick="closeSuccessModal()" class="w-full px-6 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-white font-semibold text-lg shadow transition active:scale-95">
+          Tutup
+        </button>
       </div>
     </div>
   </div>  <style>
@@ -123,22 +127,21 @@
       const ramValue = document.getElementById("ram").value;
       const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
       document.getElementById("panelAccessInfo").innerHTML = `
-        Berikut detail akun panel kamu\n\n
-        Server ID: ${data.server_id || '19'}\n
-        Username: ${data.username || '-'}\n
-        Password: ${data.password || '-'}\n
-        Tanggal Aktivasi: ${tglFormat}\n\n
-        Spesifikasi server panel:\n
-        - RAM: ${ramDisplay}\n
-        - Disk: Unlimited\n
-        - CPU: Unlimited\n
-        - Panel: ${data.panelUrl || '-'}\n\n
-        Rules pembelian panel:\n
-        - Masa aktif 30 hari\n
-        - Data bersifat pribadi, mohon disimpan dengan aman\n
-        - Garansi berlaku 15 hari (1x replace)\n
+        📡 Server ID: ${data.server_id || '19'}<br>
+        👤 Username: <span id="toCopyUser" class="select-all">${data.username || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button><br>
+        🔐 Password: <span id="toCopyPass" class="select-all">${data.password || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button><br>
+        🗓️ Tanggal Aktivasi: ${tglFormat}<br><br>
+        <b>⚙️ Spesifikasi server panel</b><br>
+        - RAM: ${ramDisplay}<br>
+        - Disk: Unlimited<br>
+        - CPU: Unlimited<br>
+        - Panel: <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button><br><br>
+        <b>Rules pembelian panel :</b><br>
+        - Masa aktif 30 hari<br>
+        - Data bersifat pribadi, mohon disimpan dengan aman<br>
+        - Garansi berlaku 15 hari (1x replace)<br>
         - Klaim garansi wajib menyertakan bukti chat pembelian
-      `.replace(/\n/g, '<br>');
+      `;
       document.getElementById("successModal").classList.remove("hidden");
     }
 
