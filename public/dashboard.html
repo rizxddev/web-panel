@@ -138,7 +138,7 @@
       const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
 
       document.getElementById("panelAccessInfo").innerHTML = `
-        <p><b>Berikut detail akun panel kamu</b></p>
+        <p><b>BERIKUT DETAIL AKUN PANEL KAMU</b></p>
         <div>📡 <b>Server ID:</b> ${data.server_id || '19'}</div>
         <div>👤 <b>Username:</b> <span id="toCopyUser" class="select-all">${data.username || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button></div>
         <div>🔐 <b>Password:</b> <span id="toCopyPass" class="select-all">${data.password || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button></div>
@@ -167,10 +167,36 @@
     }
 
     function copyAllPanelInfo() {
-      const clone = document.getElementById("panelAccessInfo").cloneNode(true);
-      clone.querySelectorAll(".copy-btn").forEach(btn => btn.remove());
-      navigator.clipboard.writeText(clone.innerText.trim()).then(() => alert("Berhasil disalin semua!"));
-    }
+  const user = document.getElementById("toCopyUser")?.textContent || "-";
+  const pass = document.getElementById("toCopyPass")?.textContent || "-";
+  const domain = document.getElementById("toCopyDomain")?.textContent || "-";
+  const serverId = document.querySelector("#panelAccessInfo div:nth-child(2)")?.textContent.replace("📡 Server ID: ", "") || "-";
+  const tanggalAktivasi = Array.from(document.querySelectorAll("#panelAccessInfo div")).find(d => d.innerText.includes("Tanggal Aktivasi"))?.textContent.replace("🗓️ Tanggal Aktivasi: ", "") || "-";
+  const ramLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("RAM"))?.textContent || "-";
+  const diskLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("Disk"))?.textContent || "-";
+  const cpuLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("CPU"))?.textContent || "-";
+
+  const textToCopy = 
+`BERIKUT DETAIL AKUN PANEL KAMU
+📡 Server ID: ${serverId}
+👤 Username: ${user}
+🔐 Password: ${pass}
+🗓️ Tanggal Aktivasi: ${tanggalAktivasi}
+
+⚙️ Spesifikasi server panel
+- ${ramLine}
+- ${diskLine}
+- ${cpuLine}
+- Panel: ${domain}
+
+Rules pembelian panel:
+- Masa aktif 30 hari
+- Data bersifat pribadi, mohon disimpan dengan aman
+- Garansi berlaku 15 hari (1x replace)
+- Klaim garansi wajib menyertakan bukti chat pembelian`;
+
+  navigator.clipboard.writeText(textToCopy).then(() => alert("Berhasil disalin semua!"));
+}
 
     function closeSuccessModal() {
       document.getElementById("successModal").classList.add("hidden");
