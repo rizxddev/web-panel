@@ -134,25 +134,59 @@
     });
 
     function showSuccessModal(data = {}) {
-      document.getElementById("panelAccessInfo").innerHTML = `
-        <div>
-          <b>👤 Username:</b> 
-          <span id="toCopyUser" class="select-all">${data.username || '-'}</span>
-          <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button>
-        </div>
-        <div>
-          <b>🔑 Password:</b> 
-          <span id="toCopyPass" class="select-all">${data.password || '-'}</span>
-          <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button>
-        </div>
-        <div>
-          <b>🌐 Domain Panel:</b> 
+  const today = new Date();
+  const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const bulan = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+  const tglFormat = `${hari[today.getDay()]}, ${today.getDate()}/${bulan[today.getMonth()]}/${today.getFullYear()}`;
+  const ramValue = document.getElementById("ram").value;
+  const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
+
+  document.getElementById("panelAccessInfo").innerHTML = `
+    <div class="text-white text-left text-sm sm:text-base leading-relaxed space-y-3">
+      <p><b>Berikut detail akun panel kamu</b></p>
+      <div>
+        📡 <b>Server ID:</b> ${data.server_id || '19'}
+      </div>
+      <div>
+        👤 <b>Username:</b> 
+        <span id="toCopyUser" class="select-all">${data.username || '-'}</span>
+        <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button>
+      </div>
+      <div>
+        🔐 <b>Password:</b> 
+        <span id="toCopyPass" class="select-all">${data.password || '-'}</span>
+        <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button>
+      </div>
+      <div>
+        🗓️ <b>Tanggal Aktivasi:</b> ${tglFormat}
+      </div>
+
+      <p class="mt-4"><b>⚙️ Spesifikasi server panel</b></p>
+      <ul class="list-disc pl-5">
+        <li>RAM: ${ramDisplay}</li>
+        <li>Disk: Unlimited</li>
+        <li>CPU: Unlimited</li>
+        <li>
+          Panel: 
           <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span>
           <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button>
-        </div>
-      `;
-      document.getElementById("successModal").classList.remove("hidden");
-    }
+        </li>
+      </ul>
+
+      <p class="mt-4"><b>Rules pembelian panel :</b></p>
+      <ul class="list-disc pl-5">
+        <li>Masa aktif 30 hari</li>
+        <li>Data bersifat pribadi, mohon disimpan dengan aman</li>
+        <li>Garansi berlaku 15 hari (1x replace)</li>
+        <li>Klaim garansi wajib menyertakan bukti chat pembelian</li>
+      </ul>
+    </div>
+  `;
+  document.getElementById("successModal").classList.remove("hidden");
+}
 
     // Fungsi salin ke clipboard
     function copyText(id) {
