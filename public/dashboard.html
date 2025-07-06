@@ -3,6 +3,15 @@
   <meta charset="UTF-8" />
   <title>Dashboard Reseller - RizxMods</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Proteksi login wajib
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "reseller") {
+      document.documentElement.innerHTML = "";
+      window.location.replace("/login-reseller.html");
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-900 relative">  <!-- Tombol Logout -->  <button onclick="logout()" class="absolute top-6 right-6 bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-lg font-bold shadow text-white text-base transition active:scale-95 z-30">
@@ -42,7 +51,8 @@
       </select>
     </div>
     <button class="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 p-3 rounded-xl w-full font-bold text-lg text-white shadow-lg transition-transform active:scale-95" type="submit">🚀 Buat Panel</button>
-  </form>  <!-- Popup sukses responsive -->  <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
+  </form> <!-- Popup sukses responsive -->
+    <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
     <div class="bg-slate-800 px-5 py-7 sm:px-8 sm:py-10 rounded-2xl shadow-xl text-center animate-pop w-[95vw] max-w-xs sm:max-w-md">
       <div class="text-6xl mb-4 animate-celebrate">🎊</div>
       <div class="font-bold text-2xl sm:text-3xl mb-4 text-green-400">Panel berhasil dibuat!</div>
