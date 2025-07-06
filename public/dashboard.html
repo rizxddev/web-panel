@@ -56,69 +56,7 @@
         </button>
       </div>
     </div>
-  </div>  <style>
-    @keyframes pop {
-      0% { transform: scale(0.8); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .animate-pop { animation: pop 0.25s cubic-bezier(.4,2,.6,1); }
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(-24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fadein { animation: fadein 0.8s cubic-bezier(.4,2,.6,1); }
-    @keyframes celebrate {
-      0%,100% { transform: rotate(0deg); }
-      20% { transform: rotate(-10deg); }
-      40% { transform: rotate(10deg); }
-      60% { transform: rotate(-6deg); }
-      80% { transform: rotate(6deg); }
-    }
-    .animate-celebrate { animation: celebrate 0.9s; }
-    .copy-btn {
-      cursor: pointer;
-      padding: 3px 9px;
-      background: #262b3b;
-      color: #67e8f9;
-      border-radius: 6px;
-      font-size: 0.95em;
-      margin-left: 8px;
-      transition: background 0.15s;
-      border: none;
-    }
-    .copy-btn:hover { background: #334155; color: #38bdf8; }
-    .select-all { user-select: all; }
-  </style>  <script>
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-    if (!token || role !== "reseller") {
-      window.location.href = "/login-reseller.html";
-    }
-
-    document.getElementById("createPanelForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const panelName = document.getElementById("panelName").value.trim();
-      const ram = document.getElementById("ram").value;
-      const email = username + "@gmail.com";
-      if (!username) return alert("Username harus diisi!");
-      if (!panelName) return alert("Nama server harus diisi!");
-      const res = await fetch("/api/create-panel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, serverName: panelName, ram, cpu: 0 })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        document.getElementById("username").value = "";
-        document.getElementById("panelName").value = "";
-        document.getElementById("ram").selectedIndex = 0;
-        showSuccessModal(data);
-      } else {
-        alert(data.error || "Gagal membuat panel");
-      }
-    });
-
+  </div>  <script>
     function showSuccessModal(data = {}) {
       const today = new Date();
       const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -127,26 +65,27 @@
       const ramValue = document.getElementById("ram").value;
       const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
       document.getElementById("panelAccessInfo").innerHTML = `
-        📡 Server ID: ${data.server_id || '19'}<br>
-        👤 Username: <span id="toCopyUser" class="select-all">${data.username || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button><br>
-        🔐 Password: <span id="toCopyPass" class="select-all">${data.password || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button><br>
-        🗓️ Tanggal Aktivasi: ${tglFormat}<br><br>
-        <b>⚙️ Spesifikasi server panel</b><br>
-        - RAM: ${ramDisplay}<br>
-        - Disk: Unlimited<br>
-        - CPU: Unlimited<br>
-        - Panel: <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button><br><br>
-        <b>Rules pembelian panel :</b><br>
-        - Masa aktif 30 hari<br>
-        - Data bersifat pribadi, mohon disimpan dengan aman<br>
-        - Garansi berlaku 15 hari (1x replace)<br>
-        - Klaim garansi wajib menyertakan bukti chat pembelian
+        <p><b>Berikut detail akun panel kamu</b></p>
+        <div>📡 <b>Server ID:</b> ${data.server_id || '19'}</div>
+        <div>👤 <b>Username:</b> <span id="toCopyUser" class="select-all">${data.username || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button></div>
+        <div>🔐 <b>Password:</b> <span id="toCopyPass" class="select-all">${data.password || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button></div>
+        <div>🗓️ <b>Tanggal Aktivasi:</b> ${tglFormat}</div>
+        <p class="mt-4"><b>⚙️ Spesifikasi server panel</b></p>
+        <ul class="list-disc pl-5">
+          <li>RAM: ${ramDisplay}</li>
+          <li>Disk: Unlimited</li>
+          <li>CPU: Unlimited</li>
+          <li>Panel: <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button></li>
+        </ul>
+        <p class="mt-4"><b>Rules pembelian panel :</b></p>
+        <ul class="list-disc pl-5">
+          <li>Masa aktif 30 hari</li>
+          <li>Data bersifat pribadi, mohon disimpan dengan aman</li>
+          <li>Garansi berlaku 15 hari (1x replace)</li>
+          <li>Klaim garansi wajib menyertakan bukti chat pembelian</li>
+        </ul>
       `;
       document.getElementById("successModal").classList.remove("hidden");
-    }
-
-    function closeSuccessModal() {
-      document.getElementById("successModal").classList.add("hidden");
     }
 
     function copyText(id) {
@@ -155,10 +94,13 @@
     }
 
     function copyAllPanelInfo() {
-      const panelInfo = document.getElementById("panelAccessInfo").innerText;
-      navigator.clipboard.writeText(panelInfo).then(() => {
-        alert("Berhasil disalin semua!");
-      });
+      const text = document.getElementById("panelAccessInfo").cloneNode(true);
+      text.querySelectorAll(".copy-btn").forEach(btn => btn.remove());
+      navigator.clipboard.writeText(text.innerText.trim()).then(() => alert("Berhasil disalin semua!"));
+    }
+
+    function closeSuccessModal() {
+      document.getElementById("successModal").classList.add("hidden");
     }
 
     function logout() {
