@@ -103,19 +103,20 @@
 
   <!-- Modal Notifikasi Admin Panel -->
   <div id="adminPanelModal" class="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center hidden">
-    <div class="bg-[#232943] px-7 py-8 rounded-2xl shadow-xl text-center max-w-xs w-full animate-pop">
-      <div class="text-5xl mb-3 animate-celebrate">📦</div>
+    <div class="bg-[#232943] px-7 py-8 rounded-2xl shadow-xl text-center max-w-xs w-full animate-pop relative">
+      <div class="text-5xl mb-3 animate-celebrate">🔥</div>
       <div class="font-bold text-xl mb-3 text-green-400">Data Akun Admin Panel 📦</div>
       <div class="text-left text-slate-200 text-base mb-3" id="adminPanelDetail"></div>
-      <div class="mb-4">
-        <button onclick="copyAllAdminPanelData()" class="w-full py-2 rounded bg-indigo-500 hover:bg-indigo-600 text-white font-semibold mb-2">Salin Semua</button>
-        <button onclick="closeAdminPanelModal()" class="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold">Tutup</button>
-      </div>
-      <div class="text-xs text-slate-400 text-left mt-2">Syarat & Ketentuan :<br>
+      <div class="text-xs text-slate-400 text-left mt-2 mb-6">Syarat & Ketentuan :<br>
         • Expired akun 1 bulan<br>
         • Simpan data ini sebaik mungkin<br>
         • Jangan asal hapus server!<br>
         • Ketahuan maling sc, auto delete akun no reff!
+      </div>
+      <!-- Tombol salin semua & tutup di bawah -->
+      <div class="flex flex-col gap-2 mt-2">
+        <button id="copyAllBtn" class="w-full py-2 rounded bg-indigo-500 hover:bg-indigo-600 text-white font-semibold">Salin Semua</button>
+        <button onclick="closeAdminPanelModal()" class="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold">Tutup</button>
       </div>
     </div>
   </div>
@@ -151,8 +152,10 @@
     window.location.href = "/";
   }
 
-  // MODAL ADMIN PANEL
+  // ======== MODAL ADMIN PANEL =========
+  let lastAdminData = null;
   function showAdminPanelModal({ id, username, password, domain }) {
+    lastAdminData = { id, username, password, domain }; // buat salin semua
     let html = `
       📡 <b>ID User</b> (${id})<br>
       👤 <b>Username</b> : <span id="copy-admin-username">${username}</span> <button onclick="copyToClipboard('${username}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
@@ -161,6 +164,11 @@
     `;
     document.getElementById("adminPanelDetail").innerHTML = html;
     document.getElementById("adminPanelModal").classList.remove("hidden");
+
+    setTimeout(() => {
+      const btn = document.getElementById("copyAllBtn");
+      if (btn) btn.onclick = copyAllAdminPanelData;
+    }, 100);
   }
   function closeAdminPanelModal() {
     document.getElementById("adminPanelModal").classList.add("hidden");
@@ -170,44 +178,58 @@
     showToastError("Tersalin ke clipboard!");
   }
   function copyAllAdminPanelData() {
-    const txt = document.getElementById("adminPanelDetail").innerText + "\n\nSyarat & Ketentuan :\n• Expired akun 1 bulan\n• Simpan data ini sebaik mungkin\n• Jangan asal hapus server!\n• Ketahuan maling sc, auto delete akun no reff!";
+    if (!lastAdminData) return;
+    const { id, username, password, domain } = lastAdminData;
+    const txt = 
+`BERIKUT DETAIL AKUN ADMIN PANEL
+
+📡 ID User (${id})
+👤 Username : ${username}
+🔐 Password : ${password}
+🌐 Domain : ${domain}
+
+Syarat & Ketentuan :
+• Expired akun 1 bulan
+• Simpan data ini sebaik mungkin
+• Jangan asal hapus server!
+• Ketahuan maling sc, auto delete akun no reff!`;
     navigator.clipboard.writeText(txt);
     showToastError("Disalin semua!");
   }
 
-  // FORM TAMBAH ADMIN PTERODACTYL
+  // ======= FORM TAMBAH ADMIN PTERODACTYL =========
   function showCreateAdminPanelForm() {
-  closeSidebar();
-  document.getElementById("mainContent").innerHTML = `
-    <div class="flex flex-col items-center justify-center min-h-[60vh]">
-      <form id="addAdminForm" class="bg-[#232943] rounded-2xl p-6 w-full max-w-md shadow-xl space-y-5 animate-pop">
-        <div class="text-2xl font-bold text-indigo-400 mb-2">Buat Admin Pterodactyl</div>
-        <input type="text" id="newAdminUsername" placeholder="Username Admin" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        <button type="submit" class="w-full py-3 rounded bg-gradient-to-r from-indigo-500 to-blue-400 text-white font-semibold text-lg">Buat Admin 🚀</button>
-      </form>
-    </div>
-  `;
-  document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const username = document.getElementById("newAdminUsername").value.trim();
-    const res = await fetch("/api/admins", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username })
-    });
-    const data = await res.json();
-    if (res.ok && data) {
-      showAdminPanelModal({
-        id: data.id || "???",
-        username: data.username,
-        password: data.password,
-        domain: data.domain
+    closeSidebar();
+    document.getElementById("mainContent").innerHTML = `
+      <div class="flex flex-col items-center justify-center min-h-[60vh]">
+        <form id="addAdminForm" class="bg-[#232943] rounded-2xl p-6 w-full max-w-md shadow-xl space-y-5 animate-pop">
+          <div class="text-2xl font-bold text-indigo-400 mb-2">Buat Admin Pterodactyl</div>
+          <input type="text" id="newAdminUsername" placeholder="Username Admin" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <button type="submit" class="w-full py-3 rounded bg-gradient-to-r from-indigo-500 to-blue-400 text-white font-semibold text-lg">Buat Admin 🚀</button>
+        </form>
+      </div>
+    `;
+    document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("newAdminUsername").value.trim();
+      const res = await fetch("/api/admins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username })
       });
-    } else {
-      showToastError(data.error || "Gagal membuat admin.");
-    }
-  });
-}
+      const data = await res.json();
+      if (res.ok && data) {
+        showAdminPanelModal({
+          id: data.id || "???",
+          username: data.username,
+          password: data.password,
+          domain: data.domain
+        });
+      } else {
+        showToastError(data.error || "Gagal membuat admin.");
+      }
+    });
+  }
 
   // --------- MENU DINAMIS ADMIN & RESELLER ---------
   function showListAdmin() {
