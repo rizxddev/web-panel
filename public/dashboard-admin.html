@@ -137,12 +137,11 @@
     </div>
   </div>
 
-  <!-- Modal Create Admin Panel Pterodactyl -->
+  <!-- Modal Create Admin Panel Pterodactyl (HANYA USERNAME) -->
   <div id="modalCreateAdminPtero" class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center hidden">
     <div class="bg-white max-w-md w-full rounded-xl p-8">
       <h2 class="text-xl font-bold mb-4 text-indigo-700">Buat Admin Panel Pterodactyl</h2>
-      <input id="adminPteroEmail" type="email" placeholder="Email admin" class="w-full mb-3 px-4 py-2 border rounded-lg">
-      <input id="adminPteroPassword" type="password" placeholder="Password" class="w-full mb-5 px-4 py-2 border rounded-lg">
+      <input id="adminPteroUsername" type="text" placeholder="Username admin" class="w-full mb-5 px-4 py-2 border rounded-lg">
       <div class="flex justify-end gap-2">
         <button onclick="closeCreateAdminPtero()" class="px-4 py-2 rounded bg-gray-200">Batal</button>
         <button onclick="createAdminPtero()" class="px-4 py-2 rounded bg-indigo-600 text-white">Buat Admin</button>
@@ -320,18 +319,11 @@
     function openCreateAdminPtero() {
       document.getElementById('modalCreateAdminPtero').classList.remove('hidden');
     }
-    function closeCreateAdminPtero() {
-      document.getElementById('modalCreateAdminPtero').classList.add('hidden');
-      document.getElementById('adminPteroResult').innerText = '';
-      document.getElementById('adminPteroEmail').value = '';
-      document.getElementById('adminPteroPassword').value = '';
-    }
     async function createAdminPtero() {
-      const email = document.getElementById('adminPteroEmail').value.trim();
-      const password = document.getElementById('adminPteroPassword').value.trim();
+      const username = document.getElementById('adminPteroUsername').value.trim();
       const resultDiv = document.getElementById('adminPteroResult');
-      if (!email || !password) {
-        resultDiv.innerText = 'Email dan password wajib diisi';
+      if (!username) {
+        resultDiv.innerText = 'Username wajib diisi!';
         resultDiv.className = 'mt-4 text-sm text-red-500';
         return;
       }
@@ -341,21 +333,16 @@
         const res = await fetch('/api/create-admin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ username })
         });
         const data = await res.json();
         if (res.ok) {
-          resultDiv.innerText = data.message || 'Admin berhasil dibuat!';
+          resultDiv.innerText = 'Admin panel berhasil dibuat!';
           resultDiv.className = 'mt-4 text-sm text-green-600';
-          // data.detail harus berisi { id, username, password, domain }
-          if (data.detail) {
-            setTimeout(() => {
-              closeCreateAdminPtero();
-              showAdminPanelModal(data.detail);
-            }, 1200);
-          } else {
-            setTimeout(closeCreateAdminPtero, 1800);
-          }
+          setTimeout(() => {
+            closeCreateAdminPtero();
+            showAdminPanelModal(data); // data sudah berisi username, password, domain
+          }, 1200);
         } else {
           resultDiv.innerText = data.error || 'Gagal membuat admin!';
           resultDiv.className = 'mt-4 text-sm text-red-500';
@@ -364,6 +351,11 @@
         resultDiv.innerText = 'Gagal terhubung ke server!';
         resultDiv.className = 'mt-4 text-sm text-red-500';
       }
+    }
+    function closeCreateAdminPtero() {
+      document.getElementById('modalCreateAdminPtero').classList.add('hidden');
+      document.getElementById('adminPteroResult').innerText = '';
+      document.getElementById('adminPteroUsername').value = '';
     }
 
     // ======= MODAL DATA ADMIN PANEL (POPUP HASIL SUKSES) =======
