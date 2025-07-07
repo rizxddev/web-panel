@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Reseller - RizxMods</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Proteksi login wajib
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "reseller") {
+      document.documentElement.innerHTML = "";
+      window.location.replace("/login-reseller.html");
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-900 relative">
+
+  <!-- Tombol Logout -->
+  <button onclick="logout()" class="absolute top-6 right-6 bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-lg font-bold shadow text-white text-base transition active:scale-95 z-30">
+    Logout
+  </button>
+
+  <div class="mb-10 text-center animate-fadein">
+    <h2 class="text-3xl font-extrabold mb-2 drop-shadow">🚀 Panel Reseller RizxMods</h2>
+    <div class="text-indigo-200 text-base font-medium">Buat server Pterodactyl dengan mudah & cepat</div>
+  </div>
+
+  <form id="createPanelForm" class="bg-slate-800/80 border border-indigo-500/30 shadow-xl p-8 rounded-2xl max-w-md w-full space-y-5 animate-pop">
+    <div class="flex items-center gap-2">
+      <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.606 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+      </span>
+      <input type="text" id="username" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Username Panel" required />
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" /></svg>
+      </span>
+      <input type="text" id="panelName" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nama Server" required />
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="bg-slate-700 text-indigo-300 rounded-full p-2">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </span>
+      <select id="ram" class="flex-1 p-3 rounded bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="1024">RAM 1 GB</option>
+        <option value="2048">RAM 2 GB</option>
+        <option value="3072">RAM 3 GB</option>
+        <option value="4096">RAM 4 GB</option>
+        <option value="5120">RAM 5 GB</option>
+        <option value="6144">RAM 6 GB</option>
+        <option value="7168">RAM 7 GB</option>
+        <option value="8192">RAM 8 GB</option>
+        <option value="9216">RAM 9 GB</option>
+        <option value="10240">RAM 10 GB</option>
+        <option value="0">RAM Unlimited</option>
+      </select>
+    </div>
+    <button type="submit" class="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 p-3 rounded-xl w-full font-bold text-lg text-white shadow-lg transition active:scale-95">
+      🚀 Buat Panel
+    </button>
+  </form>
+
+  <!-- Modal Sukses -->
+  <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60 hidden">
+    <div class="bg-slate-800 px-5 py-7 sm:px-8 sm:py-10 rounded-2xl shadow-xl text-center animate-pop w-[95vw] max-w-xs sm:max-w-md">
+      <div class="text-6xl mb-4 animate-celebrate">🎊</div>
+      <div class="font-bold text-2xl sm:text-3xl mb-4 text-green-400">Panel berhasil dibuat!</div>
+      <div id="panelAccessInfo" class="mb-5 text-white space-y-3 text-left text-sm sm:text-base leading-relaxed select-all"></div>
+      <div class="w-full space-y-3 mt-6">
+        <button onclick="copyAllPanelInfo()" class="w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-white font-semibold text-lg shadow transition active:scale-95">
+          Salin Semua
+        </button>
+        <button onclick="closeSuccessModal()" class="w-full px-6 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-white font-semibold text-lg shadow transition active:scale-95">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pop { 0% { transform: scale(0.8); opacity: 0;} 100% { transform: scale(1); opacity: 1; } }
+    .animate-pop { animation: pop 0.25s cubic-bezier(.4,2,.6,1); }
+    @keyframes fadein { from { opacity: 0; transform: translateY(-24px);} to { opacity: 1; transform: translateY(0); } }
+    .animate-fadein { animation: fadein 0.8s cubic-bezier(.4,2,.6,1); }
+    @keyframes celebrate {
+      0%,100% { transform: rotate(0deg);} 20% { transform: rotate(-10deg);} 40% { transform: rotate(10deg);}
+      60% { transform: rotate(-6deg);} 80% { transform: rotate(6deg);}
+    }
+    .animate-celebrate { animation: celebrate 0.9s; }
+    .copy-btn {
+      cursor: pointer; padding: 3px 9px; background: #262b3b; color: #67e8f9;
+      border-radius: 6px; font-size: 0.9em; margin-left: 8px; border: none;
+    }
+    .copy-btn:hover { background: #334155; color: #38bdf8; }
+    .select-all { user-select: all; }
+  </style>
+
+  <script>
+    document.getElementById("createPanelForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const panelName = document.getElementById("panelName").value.trim();
+      const ram = document.getElementById("ram").value;
+      const email = username + "@gmail.com";
+
+      if (!username || !panelName) return alert("Semua kolom harus diisi!");
+
+      try {
+        const res = await fetch("/api/create-panel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, serverName: panelName, ram, cpu: 0 })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("username").value = "";
+          document.getElementById("panelName").value = "";
+          document.getElementById("ram").selectedIndex = 0;
+          showSuccessModal(data);
+        } else {
+          alert(data?.error || "Gagal membuat panel");
+        }
+      } catch {
+        alert("Terjadi kesalahan koneksi.");
+      }
+    });
+
+    function showSuccessModal(data = {}) {
+      const today = new Date();
+      const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+      const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+      const tglFormat = `${hari[today.getDay()]}, ${today.getDate()}/${bulan[today.getMonth()]}/${today.getFullYear()}`;
+      const ramValue = document.getElementById("ram").value;
+      const ramDisplay = ramValue === "0" ? "Unlimited" : `${ramValue / 1024} GB`;
+
+      document.getElementById("panelAccessInfo").innerHTML = `
+        <p><b>BERIKUT DETAIL AKUN PANEL KAMU</b></p>
+        <div>📡 <b>Server ID:</b> ${data.server_id || '19'}</div>
+        <div>👤 <b>Username:</b> <span id="toCopyUser" class="select-all">${data.username || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyUser')">Salin</button></div>
+        <div>🔐 <b>Password:</b> <span id="toCopyPass" class="select-all">${data.password || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyPass')">Salin</button></div>
+        <div>🗓️ <b>Tanggal Aktivasi:</b> ${tglFormat}</div>
+        <p class="mt-4"><b>⚙️ Spesifikasi server panel</b></p>
+        <ul class="list-disc pl-5">
+          <li>RAM: ${ramDisplay}</li>
+          <li>Disk: Unlimited</li>
+          <li>CPU: Unlimited</li>
+          <li>Panel: <span id="toCopyDomain" class="select-all">${data.panelUrl || '-'}</span> <button class="copy-btn" onclick="copyText('toCopyDomain')">Salin</button></li>
+        </ul>
+        <p class="mt-4"><b>Rules pembelian panel :</b></p>
+        <ul class="list-disc pl-5">
+          <li>Masa aktif 30 hari</li>
+          <li>Data bersifat pribadi, mohon disimpan dengan aman</li>
+          <li>Garansi berlaku 15 hari (1x replace)</li>
+          <li>Klaim garansi wajib menyertakan bukti chat pembelian</li>
+        </ul>
+      `;
+      document.getElementById("successModal").classList.remove("hidden");
+    }
+
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text);
+    }
+
+    function copyAllPanelInfo() {
+  const user = document.getElementById("toCopyUser")?.textContent || "-";
+  const pass = document.getElementById("toCopyPass")?.textContent || "-";
+  const domain = document.getElementById("toCopyDomain")?.textContent || "-";
+  const serverId = document.querySelector("#panelAccessInfo div:nth-child(2)")?.textContent.replace("📡 Server ID: ", "") || "-";
+  const tanggalAktivasi = Array.from(document.querySelectorAll("#panelAccessInfo div")).find(d => d.innerText.includes("Tanggal Aktivasi"))?.textContent.replace("🗓️ Tanggal Aktivasi: ", "") || "-";
+  const ramLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("RAM"))?.textContent || "-";
+  const diskLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("Disk"))?.textContent || "-";
+  const cpuLine = Array.from(document.querySelectorAll("#panelAccessInfo li")).find(li => li.innerText.includes("CPU"))?.textContent || "-";
+
+  const textToCopy = 
+`BERIKUT DETAIL AKUN PANEL KAMU
+📡 Server ID: ${serverId}
+👤 Username: ${user}
+🔐 Password: ${pass}
+🗓️ Tanggal Aktivasi: ${tanggalAktivasi}
+
+⚙️ Spesifikasi server panel
+- ${ramLine}
+- ${diskLine}
+- ${cpuLine}
+- Panel: ${domain}
+
+Rules pembelian panel:
+- Masa aktif 30 hari
+- Data bersifat pribadi, mohon disimpan dengan aman
+- Garansi berlaku 15 hari (1x replace)
+- Klaim garansi wajib menyertakan bukti chat pembelian`;
+
+  navigator.clipboard.writeText(textToCopy).then(() => alert("Berhasil disalin semua!"));
+}
+
+    function closeSuccessModal() {
+      document.getElementById("successModal").classList.add("hidden");
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      window.location.href = "/";
+    }
+  </script>
+</body>
+</html>

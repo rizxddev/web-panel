@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel RizxMods</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .bg-luxury {
+      background: radial-gradient(circle at 50% 10%, #222641 0 40%, #161927 100%);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .lux-glass {
+      background: rgba(27,30,51,0.92);
+      border-radius: 2.25rem;
+      box-shadow: 0 6px 40px 0 #23274e4d, 0 2px 20px 0 #60a5fa22;
+      border: 1.5px solid rgba(93,132,255,0.14);
+      backdrop-filter: blur(18px) saturate(170%);
+      border-bottom: 2.5px solid rgba(93,132,255,0.17);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .lux-divider {
+      border-top: 1px solid rgba(97,116,255,0.08);
+      margin: 32px 0 18px 0;
+      opacity:.66;
+    }
+    .lux-btn {
+      background: linear-gradient(92deg,rgba(67,89,238,0.17) 10%,rgba(30,206,253,0.09) 100%);
+      color: #e9edff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 1rem;
+      box-shadow: 0 1.5px 18px 0 #282f5a33;
+      border: 1.3px solid rgba(142,151,255,0.12);
+      letter-spacing: .01em;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      transition: all .16s cubic-bezier(.4,2,.6,1);
+    }
+    .lux-btn:hover, .lux-btn:focus {
+      color: #fff;
+      border: 1.5px solid #5eead4;
+      background: linear-gradient(93deg,rgba(80,129,255,0.18) 15%,rgba(93,252,255,0.15) 100%);
+      box-shadow: 0 7px 34px 0 #93c5fd4d;
+      transform: translateY(-2px) scale(1.028);
+    }
+    .lux-btn:active {
+      filter: brightness(.92);
+      transform: scale(.97);
+    }
+    .emoji-crown-glow {
+      font-size: 3.8rem;
+      filter: drop-shadow(0 0 18px #fbbf24) drop-shadow(0 0 6px #fde68a88);
+      animation: floaty 3s infinite cubic-bezier(.45,2,.5,1.1);
+      line-height: 1;
+      user-select: none;
+    }
+    @keyframes floaty {
+      0%,100% { transform: translateY(0);}
+      60% { transform: translateY(-15px);}
+    }
+    .lux-title {
+      letter-spacing: -.01em;
+      text-shadow: 0 3px 24px #3751ff17;
+      font-weight: 800;
+    }
+    .lux-shadow-inner {
+      box-shadow: 0 0 56px 8px #60a5fa14 inset;
+      border-radius: inherit;
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    @media (max-width: 500px) {
+      .lux-glass { padding: 18px 8px 28px 8px !important; border-radius: 1.2rem;}
+      .lux-btn { font-size: 1rem; border-radius: 0.7rem; }
+      .emoji-crown-glow { font-size: 2.3rem;}
+    }
+  </style>
+</head>
+<body class="bg-luxury flex flex-col items-center justify-center">
+
+  <div class="lux-glass relative max-w-md w-full px-10 py-14 flex flex-col items-center gap-7 animate-fadein" style="box-shadow:0 10px 64px #3b82f658;">
+    <div class="lux-shadow-inner"></div>
+    <!-- Emoji 👑 dengan efek glow -->
+    <div class="mb-2 flex flex-col items-center">
+      <span class="emoji-crown-glow select-none">👑</span>
+      <h1 class="lux-title text-3xl sm:text-4xl mt-5 mb-1 text-indigo-100 text-center select-none">
+        Panel RizxMods
+      </h1>
+      <div class="text-indigo-200 text-base font-medium opacity-95 text-center select-none mb-1">
+        Sistem panel server profesional & otomatis
+      </div>
+    </div>
+    <div class="lux-divider w-full"></div>
+
+    <a href="login-admin.html"
+      class="lux-btn w-full py-3 mb-3 shadow text-center block transition outline-none focus:ring-2 focus:ring-cyan-400">
+      Login Admin
+    </a>
+    <a href="login-reseller.html"
+      class="lux-btn w-full py-3 mb-3 shadow text-center block transition outline-none focus:ring-2 focus:ring-cyan-400">
+      Login Reseller
+    </a>
+    <a id="btn-wa" target="_blank"
+      class="lux-btn w-full py-3 mb-3 shadow text-center block transition outline-none focus:ring-2 focus:ring-green-400">
+      Chat Owner via WhatsApp
+    </a>
+    <a id="btn-channel" target="_blank"
+      class="lux-btn w-full py-3 shadow text-center block transition outline-none focus:ring-2 focus:ring-yellow-400">
+      Gabung Saluran WhatsApp
+    </a>
+  </div>
+
+  <!-- Copyright -->
+  <div class="w-full text-center mt-8 select-none">
+    <span class="text-xs text-indigo-200 opacity-70 tracking-wide">&copy; 2025 RizxMods. All rights reserved.</span>
+  </div>
+
+  <script>
+    fetch('/api/env')
+      .then(res => res.json())
+      .then(env => {
+        document.getElementById('btn-wa').href = 'https://wa.me/' + env.owner_wa;
+        document.getElementById('btn-channel').href = env.channel_wa;
+      });
+  </script>
+</body>
+</html>
