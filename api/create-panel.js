@@ -71,7 +71,7 @@ export default async function handler(req, res) {
   const payload = {
     name: serverName,
     user: userId,
-    egg: 17,
+    egg: 20,
     docker_image: "ghcr.io/pterodactyl/yolks:nodejs_18",
     startup: "{{CMD_RUN}}",
     limits: {
