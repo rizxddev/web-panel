@@ -27,7 +27,7 @@
       .lg\\:ml-56 { margin-left: 14rem !important;}
     }
   </style>
-<script>
+  <script>
     // Proteksi halaman, hanya untuk admin
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
@@ -50,19 +50,19 @@
       </button>
     </div>
     <div class="flex flex-col gap-2 mt-4 px-5">
-  <button onclick="showListAdmin()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
-    👤 List Admin
-  </button>
-  <button onclick="showListAdminUser()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
+      <button onclick="showListAdmin()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
+        👤 List Admin
+      </button>
+        <button onclick="showListAdminUser()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
     👑 List Admin User
-  </button>
-  <button onclick="showListReseller()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
-    📂 List Reseller
-  </button>
-  <button onclick="showCreateAdminPanelForm()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
-    ➕ Tambah Admin Pterodactyl
-  </button>
-</div>
+    </button>
+      <button onclick="showListReseller()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
+        📂 List Reseller
+      </button>
+      <button onclick="showCreateAdminPanelForm()" class="text-left px-3 py-2 rounded hover:bg-indigo-700 transition text-indigo-200 font-medium">
+        ➕ Tambah Admin Pterodactyl
+      </button>
+    </div>
   </nav>
 
   <!-- Header -->
@@ -235,7 +235,7 @@ Syarat & Ketentuan :
   }
 
   // --------- MENU DINAMIS ADMIN & RESELLER ---------
- function showListAdminUser() {
+  function showListAdminUser() {
   closeSidebar();
   document.getElementById("mainContent").innerHTML = `
     <div class="glass p-5 rounded-2xl shadow-xl mb-7">
@@ -285,346 +285,6 @@ async function loadAdminUsers() {
     tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-red-400">❌ Gagal memuat data.</td></tr>`;
   }
 }
-  function showListAdmin() {
-    closeSidebar();
-    document.getElementById("mainContent").innerHTML = `
-      <div class="glass p-5 rounded-2xl shadow-xl mb-7">
-        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-          <span class="text-indigo-400 text-2xl">👤</span> Daftar Admin Pterodactyl
-        </h2>
-        <div class="overflow-x-auto rounded-lg">
-          <table class="min-w-full text-sm bg-[#232943] rounded-xl overflow-hidden">
-            <thead>
-              <tr class="bg-[#2d3656] text-indigo-300">
-                <th class="p-2">Username</th>
-                <th class="p-2">Email</th>
-                <th class="p-2">Aksi</th>
-              </tr>
-            </thead>
-            <tbody class="text-white" id="adminTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    `;
-    loadAdmins();
-  }
-  function showListReseller() {
-    closeSidebar();
-    document.getElementById("mainContent").innerHTML = `
-      <div class="glass p-5 rounded-2xl shadow-xl mb-7">
-        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-          <span class="text-orange-300 text-2xl">📂</span> Daftar Reseller
-        </h2>
-        <div class="overflow-x-auto rounded-lg">
-          <table class="min-w-full text-sm bg-[#232943] rounded-xl overflow-hidden">
-            <thead>
-              <tr class="bg-[#2d3656] text-indigo-300">
-                <th class="p-2">Username</th>
-                <th class="p-2">Ganti Password</th>
-                <th class="p-2">Aksi</th>
-              </tr>
-            </thead>
-            <tbody class="text-white" id="resellerTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    `;
-    loadResellers();
-  }
-
-  // --------- LOAD DATA ADMIN & RESELLER ---------
-  async function loadAdmins() {
-    const tbody = document.getElementById('adminTableBody');
-    tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
-    try {
-      const res = await fetch("/api/admins");
-      const data = await res.json();
-      let arr = Array.isArray(data) ? data : data.admins || [];
-      if (!arr.length) {
-        tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-400'>Belum ada admin.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      arr.forEach(a => {
-        tbody.innerHTML += `
-          <tr>
-            <td class="p-2">@${a.username}</td>
-            <td class="p-2">${a.email || ''}</td>
-            <td class="p-2">
-              <button onclick="deleteAdmin('${a.username}')" class="bg-red-600 rounded px-2 text-xs font-bold">Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    } catch {
-      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
-    }
-  }
-  async function deleteAdmin(username) {
-    if (!confirm(`Yakin ingin menghapus admin "${username}"?`)) return;
-    const res = await fetch("/api/admins", {
-      method: "DELETE", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username })
-    });
-    if (res.ok) {
-      showListAdmin();
-      showToastError("Admin dihapus!");
-    } else {
-      showToastError("Gagal menghapus admin.");
-    }
-  }
-  async function loadResellers() {
-    const tbody = document.getElementById('resellerTableBody');
-    tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
-    try {
-      const res = await fetch("/api/resellers");
-      const data = await res.json();
-      let resArr = Array.isArray(data) ? data : data.resellers || [];
-      if (!resArr.length) {
-        tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-slate-400'>Belum ada reseller.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      resArr.forEach(r => {
-        tbody.innerHTML += `
-          <tr>
-            <td class="p-2">@${r.username}</td>
-            <td class="p-2">
-              <input type="password" id="newpass-${r.username}" class="bg-[#212738] rounded px-2 text-sm text-white border border-indigo-800" placeholder="Password baru" />
-              <button onclick="gantiPasswordReseller('${r.username}')" class="ml-2 bg-yellow-400 text-slate-900 px-2 rounded text-xs font-bold">Simpan</button>
-            </td>
-            <td class="p-2">
-              <button onclick="deleteReseller('${r.username}')" class="bg-red-600 rounded px-2 text-xs font-bold">Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    } catch {
-      tbody.innerHTML = "<tr><td colspan='3' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
-    }
-  }
-
-  // Ganti password reseller
-  async function gantiPasswordReseller(username) {
-    const newPassword = document.getElementById('newpass-' + username).value.trim();
-    if (!newPassword) return showToastError('Password baru wajib diisi');
-    const res = await fetch('/api/resellers', {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, newPassword })
-    });
-    const msg = await res.json();
-    if (msg.error) {
-      showToastError(msg.error);
-    } else {
-      showToastError(msg.message || "Berhasil ganti password.");
-      loadResellers();
-    }
-  }
-
-  // Hapus reseller
-  async function deleteReseller(username) {
-    if (!confirm(`Yakin ingin menghapus reseller "${username}"?`)) return;
-    const res = await fetch("/api/resellers", {
-      method: "DELETE", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username })
-    });
-    if (res.ok) {
-      loadResellers();
-      showToastError("Reseller dihapus!");
-    } else {
-      showToastError("Gagal menghapus reseller.");
-    }
-  }
-
-  // List Panel/Server (default dashboard)
-  async function loadServers() {
-    const tbody = document.getElementById('serverTableBody');
-    if (!tbody) return; // halaman bisa saja bukan dashboard
-    tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-300'>Memuat...</td></tr>";
-    try {
-      const res = await fetch("/api/list-panels");
-      const data = await res.json();
-      let arr = Array.isArray(data) ? data : data.servers || [];
-      if (!arr.length) {
-        tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-slate-400'>Belum ada panel/server.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      arr.forEach(s => {
-        tbody.innerHTML += `
-          <tr>
-            <td class="p-2">${s.id || s.uuid || ''}</td>
-            <td class="p-2">${s.name || ''}</td>
-            <td class="p-2">${s.owner || ''}</td>
-            <td class="p-2">${s.status || ''}</td>
-          </tr>
-        `;
-      });
-    } catch {
-      tbody.innerHTML = "<tr><td colspan='4' class='p-3 text-center text-red-400'>❌ Gagal memuat data.</td></tr>";
-    }
-  }
-
-  // ONLOAD: dashboard default = list panel/server
-  window.onload = function() {
-    closeSidebar();
-    loadServers();
-  }
-  </script>
-</body>
-</html>  <div class="lg:ml-56 max-w-3xl mx-auto px-2" id="mainContent">
-    <!-- Default: List Panel/Server -->
-    <div class="glass p-5 rounded-2xl shadow-xl mb-10">
-      <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-        <span class="text-cyan-300 text-2xl">🖥️</span> List Panel/Server
-      </h2>
-      <div class="overflow-x-auto rounded-lg">
-        <table class="min-w-full text-sm bg-[#232943] rounded-xl overflow-hidden">
-          <thead>
-            <tr class="bg-[#2d3656] text-indigo-300">
-              <th class="p-2">ID</th>
-              <th class="p-2">Nama Panel</th>
-              <th class="p-2">Pemilik</th>
-              <th class="p-2">Status</th>
-            </tr>
-          </thead>
-          <tbody class="text-white" id="serverTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Notifikasi Admin Panel -->
-  <div id="adminPanelModal" class="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center hidden">
-    <div class="bg-[#232943] px-7 py-8 rounded-2xl shadow-xl text-center max-w-xs w-full animate-pop relative">
-      <div class="text-5xl mb-3 animate-celebrate">🔥</div>
-      <div class="font-bold text-xl mb-3 text-green-400">Data Akun Admin Panel 📦</div>
-      <div class="text-left text-slate-200 text-base mb-3" id="adminPanelDetail"></div>
-      <div class="text-xs text-slate-400 text-left mt-2 mb-6">Syarat & Ketentuan :<br>
-        • Expired akun 1 bulan<br>
-        • Simpan data ini sebaik mungkin<br>
-        • Jangan asal hapus server!<br>
-        • Ketahuan maling sc, auto delete akun no reff!
-      </div>
-      <!-- Tombol salin semua & tutup di bawah -->
-      <div class="flex flex-col gap-2 mt-2">
-        <button id="copyAllBtn" class="w-full py-2 rounded bg-indigo-500 hover:bg-indigo-600 text-white font-semibold">Salin Semua</button>
-        <button onclick="closeAdminPanelModal()" class="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-  // SIDEBAR & MENU
-  const sidebar = document.getElementById('sidebarNav');
-  const sidebarOverlay = document.getElementById('sidebarOverlay');
-  function openSidebar() {
-    sidebar.classList.remove('-translate-x-full', 'hidden');
-    sidebar.classList.add('translate-x-0');
-    sidebarOverlay.classList.remove('hidden');
-  }
-  function closeSidebar() {
-    sidebar.classList.add('-translate-x-full');
-    sidebar.classList.remove('translate-x-0');
-    sidebarOverlay.classList.add('hidden');
-  }
-  document.getElementById('openSidebarBtn').onclick = openSidebar;
-
-  // Toast popup error
-  function showToastError(msg) {
-    const toast = document.getElementById('toastError');
-    toast.innerText = msg;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 2200);
-  }
-
-  // Logout
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "/";
-  }
-
-  // ======== MODAL ADMIN PANEL =========
-  let lastAdminData = null;
-  function showAdminPanelModal({ id, username, password, domain }) {
-    lastAdminData = { id, username, password, domain }; // buat salin semua
-    let html = `
-      📡 <b>ID User</b> (${id})<br>
-      👤 <b>Username</b> : <span id="copy-admin-username">${username}</span> <button onclick="copyToClipboard('${username}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-      🔐 <b>Password</b> : <span id="copy-admin-password">${password}</span> <button onclick="copyToClipboard('${password}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-      🌐 <b>Domain</b> : <span id="copy-admin-domain">${domain}</span> <button onclick="copyToClipboard('${domain}')" class="text-xs text-green-300 underline ml-1">Salin</button><br>
-    `;
-    document.getElementById("adminPanelDetail").innerHTML = html;
-    document.getElementById("adminPanelModal").classList.remove("hidden");
-
-    setTimeout(() => {
-      const btn = document.getElementById("copyAllBtn");
-      if (btn) btn.onclick = copyAllAdminPanelData;
-    }, 100);
-  }
-  function closeAdminPanelModal() {
-    document.getElementById("adminPanelModal").classList.add("hidden");
-  }
-  function copyToClipboard(txt) {
-    navigator.clipboard.writeText(txt);
-    showToastError("Tersalin ke clipboard!");
-  }
-  function copyAllAdminPanelData() {
-    if (!lastAdminData) return;
-    const { id, username, password, domain } = lastAdminData;
-    const txt = 
-`BERIKUT DETAIL AKUN ADMIN PANEL
-
-📡 ID User (${id})
-👤 Username : ${username}
-🔐 Password : ${password}
-🌐 Domain : ${domain}
-
-Syarat & Ketentuan :
-• Expired akun 1 bulan
-• Simpan data ini sebaik mungkin
-• Jangan asal hapus server!
-• Ketahuan maling sc, auto delete akun no reff!`;
-    navigator.clipboard.writeText(txt);
-    showToastError("Disalin semua!");
-  }
-
-  // ======= FORM TAMBAH ADMIN PTERODACTYL =========
-  function showCreateAdminPanelForm() {
-    closeSidebar();
-    document.getElementById("mainContent").innerHTML = `
-      <div class="flex flex-col items-center justify-center min-h-[60vh]">
-        <form id="addAdminForm" class="bg-[#232943] rounded-2xl p-6 w-full max-w-md shadow-xl space-y-5 animate-pop">
-          <div class="text-2xl font-bold text-indigo-400 mb-2">Buat Admin Pterodactyl</div>
-          <input type="text" id="newAdminUsername" placeholder="Username Admin" required class="w-full p-3 bg-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          <button type="submit" class="w-full py-3 rounded bg-gradient-to-r from-indigo-500 to-blue-400 text-white font-semibold text-lg">Buat Admin 🚀</button>
-        </form>
-      </div>
-    `;
-    document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("newAdminUsername").value.trim();
-      const res = await fetch("/api/admins", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
-      });
-      const data = await res.json();
-      if (res.ok && data) {
-        showAdminPanelModal({
-          id: data.id || "???",
-          username: data.username,
-          password: data.password,
-          domain: data.domain
-        });
-      } else {
-        showToastError(data.error || "Gagal membuat admin.");
-      }
-    });
-  }
-
-  // --------- MENU DINAMIS ADMIN & RESELLER ---------
   function showListAdmin() {
     closeSidebar();
     document.getElementById("mainContent").innerHTML = `
