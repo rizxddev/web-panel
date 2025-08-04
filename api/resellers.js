@@ -1,74 +1,112 @@
-import fs from 'fs';
-import path from 'path';
+import axios from 'axios';
 
-const filePath = path.resolve('./data/resellers.json');
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_OWNER = process.env.GITHUB_OWNER;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+const GITHUB_FILE_PATH = "data/resellers.json"
 
-export default function handler(req, res) {
-  // GET: list semua reseller
+if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
+  throw new Error("❌ Missing GitHub config in environment variables.");
+}
+
+const githubHeaders = {
+  Authorization: `Bearer ${GITHUB_TOKEN}`,
+  Accept: 'application/vnd.github.v3+json',
+};
+
+async function getFile() {
+  try {
+    const res = await axios.get(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`,
+      { headers: githubHeaders }
+    );
+    const content = Buffer.from(res.data.content, 'base64').toString();
+    return { content: JSON.parse(content), sha: res.data.sha };
+  } catch {
+    return { content: [], sha: null };
+  }
+}
+
+async function updateFile(data, message, sha = null) {
+  const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
+  const body = {
+    message,
+    content,
+    committer: {
+      name: 'Reseller Bot',
+      email: 'bot@example.com' // Diperlukan GitHub API, tapi tidak akan masuk ke JSON
+    },
+  };
+  if (sha) body.sha = sha;
+
+  await axios.put(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`,
+    body,
+    { headers: githubHeaders }
+  );
+}
+
+export default async function handler(req, res) {
   if (req.method === 'GET') {
-    try {
-      const resellers = JSON.parse(fs.readFileSync(filePath));
-      res.status(200).json(resellers);
-    } catch {
-      res.status(200).json([]);
-    }
-    return;
+    const { content } = await getFile();
+    return res.status(200).json(content);
   }
 
-  // POST: tambah reseller
   if (req.method === 'POST') {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: "Username & password harus diisi" });
     }
 
-    let resellers = [];
-    try { resellers = JSON.parse(fs.readFileSync(filePath)); } catch {}
+    const { content: resellers, sha } = await getFile();
     if (resellers.find(r => r.username === username)) {
       return res.status(409).json({ error: "Username sudah ada" });
     }
-    resellers.push({ username, password });
-    fs.writeFileSync(filePath, JSON.stringify(resellers, null, 2));
-    res.status(201).json({ message: "Reseller berhasil ditambah" });
-    return;
+
+    const updated = [...resellers, { username, password }];
+    await updateFile(updated, `Tambah reseller: ${username}`, sha);
+    return res.status(201).json({ message: "Reseller berhasil ditambah" });
   }
 
-  // DELETE: hapus reseller (by username)
   if (req.method === 'DELETE') {
     const { username } = req.body;
-    let resellers = [];
-    try { resellers = JSON.parse(fs.readFileSync(filePath)); } catch {}
-    const newList = resellers.filter(r => r.username !== username);
-    fs.writeFileSync(filePath, JSON.stringify(newList, null, 2));
-    res.status(200).json({ message: "Reseller dihapus" });
-    return;
+    if (!username) {
+      return res.status(400).json({ error: "Username harus diisi" });
+    }
+
+    const { content: resellers, sha } = await getFile();
+    const updated = resellers.filter(r => r.username !== username);
+    if (updated.length === resellers.length) {
+      return res.status(404).json({ error: "Reseller tidak ditemukan" });
+    }
+
+    await updateFile(updated, `Hapus reseller: ${username}`, sha);
+    return res.status(200).json({ message: "Reseller dihapus" });
   }
 
-  // PATCH: ganti password reseller
   if (req.method === 'PATCH') {
     const { username, newPassword } = req.body;
     if (!username || !newPassword) {
       return res.status(400).json({ error: "Username & newPassword harus diisi" });
     }
-    let resellers = [];
-    try { resellers = JSON.parse(fs.readFileSync(filePath)); } catch {}
-    let updated = false;
-    resellers = resellers.map(r => {
+
+    const { content: resellers, sha } = await getFile();
+    let found = false;
+    const updated = resellers.map(r => {
       if (r.username === username) {
-        updated = true;
+        found = true;
         return { ...r, password: newPassword };
       }
       return r;
     });
-    fs.writeFileSync(filePath, JSON.stringify(resellers, null, 2));
-    if (updated) {
-      res.status(200).json({ message: "Password reseller diupdate" });
-    } else {
-      res.status(404).json({ error: "Reseller tidak ditemukan" });
+
+    if (!found) {
+      return res.status(404).json({ error: "Reseller tidak ditemukan" });
     }
-    return;
+
+    await updateFile(updated, `Update password reseller: ${username}`, sha);
+    return res.status(200).json({ message: "Password reseller diupdate" });
   }
 
-  // Method tidak diijinkan
-  res.status(405).json({ error: "Method not allowed" });
+  return res.status(405).json({ error: "Method not allowed" });
 }
