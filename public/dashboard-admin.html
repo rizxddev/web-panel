@@ -27,7 +27,14 @@
       .lg\\:ml-56 { margin-left: 14rem !important;}
     }
   </style>
-
+<script>
+    // Proteksi halaman, hanya untuk admin
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "admin") {
+      window.location.href = "/login-admin.html";
+    }
+  </script>
 </head>
 <body class="bg-gradient-to-tr from-[#101425] via-[#182237] to-[#233066] min-h-screen pb-10">
 
