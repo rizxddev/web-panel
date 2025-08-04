@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     name: serverName,
     user: userId,
     egg: 15,
-    docker_image: "ghcr.io/pterodactyl/yolks:nodejs_18",
+    docker_image: "ghcr.io/pterodactyl/yolks:nodejs_24",
     startup: "{{CMD_RUN}}",
     limits: {
       memory: ram,
